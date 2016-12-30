@@ -3,8 +3,8 @@ struct Money {
         case usd = 1, eur = 1.05, gbp = 1.22
     }
     
-    let currency: Currency
-    let amount: Decimal
+    let amount   : Decimal
+    let currency : Currency
 }
 
 extension Money: Comparable {
