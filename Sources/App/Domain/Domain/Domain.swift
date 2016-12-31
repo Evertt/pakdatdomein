@@ -4,6 +4,8 @@ final class Domain: AggregateRoot {
     var owner    : Owner
     var archived : Bool
     
+    var uncommittedEvents = [Event]()
+    
     init(
         id: ID,
         url: URL,

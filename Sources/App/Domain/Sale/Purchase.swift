@@ -24,6 +24,4 @@ extension Purchase {
     enum Status {
         case pending, canceled, completed
     }
-
-    enum Event {}
 }
