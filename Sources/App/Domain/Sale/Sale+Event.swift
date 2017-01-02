@@ -1,5 +1,5 @@
 extension Sale {
-    enum Event {
+    public enum Event {
         case saleOpened(saleID: ID, domainID: ID, price: Money)
         case saleCanceled
         case saleCompleted

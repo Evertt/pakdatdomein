@@ -11,30 +11,27 @@ extension Auction {
 }
 
 extension Auction: CommandHandler {
-    static func handle(command: Command, for auction: Auction!) throws -> [Event] {
+    static func handle(command: Command, for auction: Auction!) throws -> Auction {
         switch command {
         
         case let .openAuction(auctionID, domainID):
-            let auction = Auction.open(auctionID: auctionID, domainID: domainID)
-            return auction.uncommittedEvents
+            return Auction.open(auctionID: auctionID, domainID: domainID)
 
         case .cancelAuction:
-            try auction.cancel()
+            return try auction.cancel()
             
         case .completeAuction:
-            try auction.complete()
+            return try auction.complete()
             
         case let .extendAuction(newEndDate):
-            try auction.extend(to: newEndDate)
+            return try auction.extend(to: newEndDate)
             
         case let .addBid(bidID, userID, amount):
-            try auction.addBid(bidID: bidID, userID: userID, amount: amount)
+            return try auction.addBid(bidID: bidID, userID: userID, amount: amount)
 
         case let .cancelBid(bidID):
-            try auction.cancelBid(bidID: bidID)
+            return try auction.cancelBid(bidID: bidID)
 
         }
-        
-        return auction.uncommittedEvents
     }
 }

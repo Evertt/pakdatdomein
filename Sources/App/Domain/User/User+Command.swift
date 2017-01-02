@@ -7,21 +7,18 @@ extension User {
 }
 
 extension User: CommandHandler {
-    static func handle(command: Command, for user: User!) throws -> [Event] {
+    static func handle(command: Command, for user: User!) throws -> User {
         switch command {
 
         case let .registerUser(id, name, email, password):
-            let user = try User.register(id: id, name: name, email: email, password: password)
-            return user.uncommittedEvents
+            return try User.register(id: id, name: name, email: email, password: password)
             
         case let .changePassword(newPassword):
-            try user.change(password: newPassword)
+            return try user.change(password: newPassword)
             
         case let .changeEmail(newEmail):
-            try user.change(email: newEmail)
+            return try user.change(email: newEmail)
 
         }
-
-        return user.uncommittedEvents
     }
 }

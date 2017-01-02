@@ -1,6 +1,6 @@
 class AnyRepository<AR: AggregateRoot> {
     typealias Event = AR.Event
-    var facts = [ID:[AnyFact<Event>]]()
+    var facts = [ID:[Fact<Event>]]()
 
     func getAggregateRoot(id: ID) -> AR? {
         return facts[id]?.reduce(nil) {
@@ -17,19 +17,7 @@ class AnyRepository<AR: AggregateRoot> {
 
         self.facts[id] = events.reduce(facts) { facts, event in
             let version = (facts.last?.version ?? 0) + 1
-            return facts + [AnyFact(aggregateRootID: id, version: version, event: event)]
+            return facts + [Fact(aggregateRootID: id, version: version, event: event)]
         }
     }
 }
-
-// Will this be used anywhere?
-// extension Optional where Wrapped: AggregateRoot {
-//     func apply(event: Wrapped.Event) -> Wrapped {
-//         switch self {
-//         case .none:
-//             return Wrapped.apply(event: event)
-//         case .some(let aggregateRoot):
-//             return Wrapped.apply(event: event, to: aggregateRoot)
-//         }
-//     }
-// }

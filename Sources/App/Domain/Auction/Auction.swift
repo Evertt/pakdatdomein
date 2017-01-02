@@ -8,14 +8,7 @@ final class Auction: AggregateRoot {
     
     var uncommittedEvents = [Event]()
     
-    init(
-        id       : ID,
-        domainID : ID,
-        bids     : [ID:Bid],
-        start    : Date,
-        end      : Date,
-        status   : Status
-    ) {
+    init(id: ID, domainID: ID, bids: [ID:Bid], start: Date, end: Date, status: Status) {
         self.id       = id
         self.domainID = domainID
         self.bids     = bids
@@ -31,52 +24,46 @@ final class Auction: AggregateRoot {
             auctionID: auctionID, domainID: domainID, start: start, end: end
         )
         
-        return fire(event: openingEvent)
+        return apply(event: openingEvent)
     }
     
-    func addBid(bidID: ID, userID: ID, amount: Money) throws {
+    func addBid(bidID: ID, userID: ID, amount: Money) throws -> Auction {
         guard status == .active else {
             throw Error.invalidStuff
         }
         
-        fire(event: .bidAdded(bidID: bidID, userID: userID, amount: amount))
+        return apply(event: .bidAdded(bidID: bidID, userID: userID, amount: amount))
     }
     
-    func cancelBid(bidID: ID) throws {
+    func cancelBid(bidID: ID) throws -> Auction {
         guard status == .active else {
             throw Error.invalidStuff
         }
         
-        fire(event: .bidCanceled(bidID: bidID))
+        return apply(event: .bidCanceled(bidID: bidID))
     }
     
-    func cancel() throws {
+    func cancel() throws -> Auction {
         guard status == .active else {
             throw Error.invalidStuff
         }
         
-        fire(event: .auctionCanceled)
+        return apply(event: .auctionCanceled)
     }
     
-    func complete() throws {
+    func complete() throws -> Auction {
         guard status == .active else {
             throw Error.invalidStuff
         }
         
-        fire(event: .auctionCompleted)
+        return apply(event: .auctionCompleted)
     }
     
-    func extend(to newDate: Date) throws {
+    func extend(to newDate: Date) throws -> Auction {
         guard status == .active else {
             throw Error.invalidStuff
         }
         
-        fire(event: .auctionExtended(newEndDate: newDate))
-    }
-}
-
-extension Auction {
-    enum Error: Swift.Error {
-        case invalidStuff
+        return apply(event: .auctionExtended(newEndDate: newDate))
     }
 }

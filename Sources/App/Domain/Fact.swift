@@ -1,29 +1,21 @@
-protocol Fact {
-    associatedtype Event
-
-    var aggregateRootID : ID { get }
-    var version         : Int { get }
-    var event           : Event { get }
-}
-
-struct AnyFact<E>: Fact {
-    typealias Event = E
-    
+struct Fact<Event: App.Event> {
     let aggregateRootID : ID
     let version         : Int
     let event           : Event
 }
 
-protocol Task {
-    associatedtype Command
+extension Fact: NodeConvertible {
+    init(node: Node, in context: Context) throws {
+        self.aggregateRootID = try node.extract("aggregateRootID")
+        self.version         = try node.extract("version")
+        self.event           = try node.extract("event")
+    }
 
-    var aggregateRootID : ID { get }
-    var command         : Command { get }
-}
-
-struct AnyTask<C>: Task {
-    typealias Command = C
-    
-    let aggregateRootID : ID
-    let command         : Command
+    func makeNode(context: Context) throws -> Node {
+        return try [
+            "aggregateRootID" : aggregateRootID.makeNode(),
+            "version"         : version.makeNode(),
+            "event"           : event.makeNode()
+        ]
+    }
 }

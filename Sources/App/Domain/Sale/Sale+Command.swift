@@ -7,21 +7,18 @@ extension Sale {
 }
 
 extension Sale: CommandHandler {
-    static func handle(command: Command, for sale: Sale!) throws -> [Event] {
+    static func handle(command: Command, for sale: Sale!) throws -> Sale {
         switch command {
 
         case let .open(saleID, domainID, price):
-            let sale = Sale.open(id: saleID, domainID: domainID, price: price)
-            return sale.uncommittedEvents
+            return Sale.open(id: saleID, domainID: domainID, price: price)
 
         case .cancel:
-            try sale.cancel()
+            return try sale.cancel()
 
         case .complete:
-            try sale.complete()
+            return try sale.complete()
 
         }
-
-        return sale.uncommittedEvents
     }
 }

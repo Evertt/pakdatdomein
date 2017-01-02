@@ -4,7 +4,7 @@ final class Sale: AggregateRoot {
     let price    : Money
     var status   : Status
 
-    var uncommittedEvents = [Event]()
+    var uncommittedEvents: [Event] = []
 
     init(id: ID, domainID: ID, price: Money, status: Status = .active) {
         self.id       = id
@@ -14,22 +14,22 @@ final class Sale: AggregateRoot {
     }
 
     static func open(id: ID, domainID: ID, price: Money) -> Sale {
-        return fire(event: .saleOpened(saleID: id, domainID: domainID, price: price))
+        return apply(event: .saleOpened(saleID: id, domainID: domainID, price: price))
     }
 
-    func cancel() throws {
+    func cancel() throws -> Sale {
         guard status == .active else {
             fatalError()
         }
 
-        fire(event: .saleCanceled)
+        return apply(event: .saleCanceled)
     }
 
-    func complete() throws {
+    func complete() throws -> Sale {
         guard status == .active else {
             fatalError()
         }
 
-        fire(event: .saleCompleted)
+        return apply(event: .saleCompleted)
     }
 }

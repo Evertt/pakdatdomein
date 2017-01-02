@@ -23,23 +23,23 @@ final class User: AggregateRoot {
             throw Error.invalidStuff
         }
 
-        return fire(event: .userRegistered(id: id, name: name, email: email, password: password))
+        return apply(event: .userRegistered(id: id, name: name, email: email, password: password))
     }
     
-    func change(password: String) throws {
+    func change(password: String) throws -> User {
         guard let password = Password(password) else {
             throw Error.invalidStuff
         }
         
-        fire(event: .passwordChanged(newPassword: password))
+        return apply(event: .passwordChanged(newPassword: password))
     }
     
-    func change(email: String) throws {
+    func change(email: String) throws -> User {
         guard let email = Email(email) else {
             throw Error.invalidStuff
         }
         
-        fire(event: .emailChanged(newEmail: email))
+        return apply(event: .emailChanged(newEmail: email))
     }
 }
 
