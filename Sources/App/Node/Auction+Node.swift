@@ -1,21 +1,11 @@
 extension Auction.Event: App.Event {
-    enum EventName: String {
-        case auctionOpened
-        case auctionCanceled
-        case auctionCompleted
-        case auctionExtended
-
-        case bidAdded
-        case bidCanceled
-    }
-
     init(node: Node, in context: Context) throws {
         guard let (name, values) = node.nodeObject?.first else {
             throw NodeError.unableToConvert(node: node, expected: "\([String:Node].self)")
         }
         
         switch name {
-        case EventName.auctionOpened.rawValue:
+        case "auctionOpened":
             self = try .auctionOpened(
                 auctionID : values.extract("auctionID"),
                 domainID  : values.extract("domainID"),
@@ -23,25 +13,25 @@ extension Auction.Event: App.Event {
                 end       : values.extract("end")
             )
             
-        case EventName.auctionCanceled.rawValue:
+        case "auctionCanceled":
             self = .auctionCanceled
             
-        case EventName.auctionCompleted.rawValue:
+        case "auctionCompleted":
             self = .auctionCompleted
             
-        case EventName.auctionExtended.rawValue:
+        case "auctionExtended":
             self = try .auctionExtended(
                 newEndDate: values.extract("newEndDate")
             )
             
-        case EventName.bidAdded.rawValue:
+        case "bidAdded":
             self = try .bidAdded(
                 bidID  : values.extract("bidID"),
                 userID : values.extract("userID"),
                 amount : values.extract("amount")
             )
             
-        case EventName.bidCanceled.rawValue:
+        case "bidCanceled":
             self = try .bidCanceled(
                 bidID: values.extract("bidID")
             )
@@ -54,43 +44,33 @@ extension Auction.Event: App.Event {
     func makeNode(context: Context) throws -> Node {
         switch self {
         case let .auctionOpened(auctionID, domainID, start, end):
-            return try [
-                EventName.auctionOpened.rawValue: [
-                    "auctionID" : auctionID.makeNode(),
-                    "domainID"  : domainID.makeNode(),
-                    "start"     : start.makeNode(),
-                    "end"       : end.makeNode()
-                ]
-            ]
+            return try ["auctionOpened": [
+                "auctionID" : auctionID.makeNode(),
+                "domainID"  : domainID.makeNode(),
+                "start"     : start.makeNode(),
+                "end"       : end.makeNode()
+            ]]
             
         case .auctionCanceled:
-            return [EventName.auctionCanceled.rawValue: .null]
+            return ["auctionCanceled": .null]
             
         case .auctionCompleted:
-            return [EventName.auctionCompleted.rawValue: .null]
+            return ["auctionCompleted": .null]
             
         case let .auctionExtended(newEndDate):
-            return try [
-                EventName.auctionExtended.rawValue: [
-                    "newEndDate": newEndDate.makeNode()
-                ]
-            ]
+            return try ["auctionExtended": [
+                "newEndDate": newEndDate.makeNode()
+            ]]
             
         case let .bidAdded(bidID, userID, amount):
-            return try [
-                EventName.bidAdded.rawValue: [
-                    "bidID"  : bidID.makeNode(),
-                    "userID" : userID.makeNode(),
-                    "amount" : amount.makeNode()
-                ]
-            ]
+            return try ["bidAdded": [
+                "bidID"  : bidID.makeNode(),
+                "userID" : userID.makeNode(),
+                "amount" : amount.makeNode()
+            ]]
             
         case let .bidCanceled(bidID):
-            return try [
-                EventName.bidCanceled.rawValue: [
-                    "bidID": bidID.makeNode()
-                ]
-            ]
+            return try ["bidCanceled": ["bidID": bidID.makeNode()]]
         }
     }
 }

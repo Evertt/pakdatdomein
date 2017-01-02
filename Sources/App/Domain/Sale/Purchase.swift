@@ -10,7 +10,7 @@ final class Purchase: Aggregate {
         userID   : ID,
         domainID : ID,
         price    : Money,
-        status   : Status = .pending
+        status   : Status
     ) {
         self.id       = id
         self.userID   = userID

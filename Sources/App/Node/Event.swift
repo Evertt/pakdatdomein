@@ -1,5 +1,3 @@
-@_exported import JSON
-
 protocol Event: RawRepresentable, Equatable, NodeConvertible, JSONConvertible {
     typealias RawValue = Node
 }

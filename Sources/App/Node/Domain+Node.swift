@@ -1,4 +1,4 @@
-extension Sale.Event: Event {
+extension Domain.Event: App.Event {
     init(node: Node, in context: Context) throws {
         fatalError("Not implemented yet...")
     }

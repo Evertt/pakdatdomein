@@ -1,5 +1,3 @@
-import Foundation
-
 extension Date: NodeConvertible {
     static fileprivate let dateFormatter: DateFormatter = {
         let dateFormatter        = DateFormatter()

@@ -1,4 +1,4 @@
-extension User.Event: Event {
+extension Sale.Event: App.Event {
     init(node: Node, in context: Context) throws {
         fatalError("Not implemented yet...")
     }
