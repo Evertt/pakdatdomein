@@ -1,3 +1,34 @@
+extension Domain.Owner: NodeConvertible {
+    init(node: Node, in context: Context) {
+        switch node {
+        case let .string(string):
+            switch string {
+            case "outsider":
+                self = .outsider
+            case "us":
+                self = .us
+            default:
+                fatalError()
+            }
+        case let .number(number):
+            self = .user(userID: ID(number.int))
+        default:
+            fatalError()
+        }
+    }
+    
+    func makeNode(context: Context) throws -> Node {
+        switch self {
+        case .outsider:
+            return "outsider"
+        case .us:
+            return "us"
+        case .user(let userID):
+            return try userID.makeNode()
+        }
+    }
+}
+
 extension Auction.Event: App.Event {
     init(node: Node, in context: Context) throws {
         guard let (name, values) = node.nodeObject?.first else {
@@ -8,7 +39,7 @@ extension Auction.Event: App.Event {
         case "auctionOpened":
             self = try .auctionOpened(
                 auctionID : values.extract("auctionID"),
-                domainID  : values.extract("domainID"),
+                owner     : values.extract("owner"),
                 start     : values.extract("start"),
                 end       : values.extract("end")
             )
@@ -43,10 +74,10 @@ extension Auction.Event: App.Event {
 
     func makeNode(context: Context) throws -> Node {
         switch self {
-        case let .auctionOpened(auctionID, domainID, start, end):
+        case let .auctionOpened(auctionID, owner, start, end):
             return try ["auctionOpened": [
                 "auctionID" : auctionID.makeNode(),
-                "domainID"  : domainID.makeNode(),
+                "owner"     : owner.makeNode(),
                 "start"     : start.makeNode(),
                 "end"       : end.makeNode()
             ]]

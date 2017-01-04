@@ -11,7 +11,8 @@ extension Sale: CommandHandler {
         switch command {
 
         case let .open(saleID, domainID, price):
-            return Sale.open(id: saleID, domainID: domainID, price: price)
+            return sale
+            //return Sale.open(id: saleID, domainID: domainID, price: price)
 
         case .cancel:
             return try sale.cancel()

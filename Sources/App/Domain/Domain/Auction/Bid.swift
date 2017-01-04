@@ -1,4 +1,4 @@
-struct Bid: Aggregate {
+final class Bid: Aggregate {
     let id       : ID
     let userID   : ID
     let amount   : Money

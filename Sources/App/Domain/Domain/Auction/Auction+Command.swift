@@ -1,6 +1,6 @@
 extension Auction {
     enum Command {
-        case openAuction(auctionID: ID, domainID: ID)
+        case openAuction(auctionID: ID, owner: Domain.Owner)
         case cancelAuction
         case completeAuction
         case extendAuction(newEndDate: Date)
@@ -14,8 +14,8 @@ extension Auction: CommandHandler {
     static func handle(command: Command, for auction: Auction!) throws -> Auction {
         switch command {
         
-        case let .openAuction(auctionID, domainID):
-            return Auction.open(auctionID: auctionID, domainID: domainID)
+        case let .openAuction(auctionID, owner):
+            return Auction.open(auctionID: auctionID, owner: owner)
 
         case .cancelAuction:
             return try auction.cancel()

@@ -1,6 +1,6 @@
 extension Auction {
     enum Event {
-        case auctionOpened(auctionID: ID, domainID: ID, start: Date, end: Date)
+        case auctionOpened(auctionID: ID, owner: Domain.Owner, start: Date, end: Date)
         case auctionCanceled
         case auctionCompleted
         case auctionExtended(newEndDate: Date)
@@ -14,10 +14,10 @@ extension Auction {
     static func apply(event: Event, to auction: Auction!) -> Auction {
         switch event {
             
-        case let .auctionOpened(auctionID, domainID, start, end):
+        case let .auctionOpened(auctionID, owner, start, end):
             return Auction(
                 id: auctionID,
-                domainID: domainID,
+                owner: owner,
                 bids: [:],
                 start: start,
                 end: end,
