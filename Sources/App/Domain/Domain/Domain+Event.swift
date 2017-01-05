@@ -6,7 +6,7 @@ extension Domain {
         case domainLost
         case domainChangedOwner(newOwner: Owner)
 
-        case auctionOpened(auctionID: ID, owner: Owner, start: Date, end: Date)
+        case auctionOpened(owner: Owner, start: Date, end: Date)
         case auctionCanceled
         case auctionCompleted
         case auctionExtended(newEndDate: Date)
@@ -14,12 +14,12 @@ extension Domain {
         case bidAdded(bidID: ID, userID: ID, amount: Money)
         case bidCanceled(bidID: ID)
 
-        case saleOpened(saleID: ID, owner: Owner, price: Money)
+        case saleOpened(owner: Owner, price: Money)
         case saleCanceled
 
-        case purchaseRequested(purchaseID: ID, userID: ID)
-        case purchaseCanceled(purchaseID: ID)
-        case purchaseCompleted(purchaseID: ID)
+        case purchaseRequested(userID: ID)
+        case purchaseCanceled
+        case purchaseCompleted
     }
 }
 
@@ -31,7 +31,7 @@ extension Domain {
             return Domain(id: domainID, url: url, owner: .user(userID: userID))
             
         case let .domainFound(domainID, url):
-            return Domain(id: domainID, url: url, owner: .outsider)
+            return Domain(id: domainID, url: url, owner: nil)
             
         case .domainGrabbed:
             domain.owner = .us
@@ -49,73 +49,40 @@ extension Domain {
         case let .domainChangedOwner(newOwner):
             domain.owner = newOwner
 
-        case let .auctionOpened(auctionID, owner, start, end):
+        case let .auctionOpened(owner, start, end):
             let auction = Auction(
-                id: auctionID,
                 owner: owner,
                 bids: [:],
                 start: start,
-                end: end,
-                status: .active
+                end: end
             )
 
-            domain.activeBusiness = .auction(auction)
+            domain.business = .auction(auction)
 
-        case .auctionCanceled:
-            domain.activeBusiness.auction.status = .canceled
-            domain.archivedBusiness.append(domain.activeBusiness!)
-            domain.activeBusiness = .none
-
-        case .auctionCompleted:
-            domain.activeBusiness.auction.status = .completed
-            domain.archivedBusiness.append(domain.activeBusiness!)
-            domain.activeBusiness = .none
+        case .auctionCanceled, .auctionCompleted,
+             .saleCanceled, .purchaseCompleted:
+            domain.business = .none
 
         case let .auctionExtended(newEndDate):
-            domain.activeBusiness.auction.end = newEndDate
+            domain.business.auction.end = newEndDate
 
         case let .bidAdded(bidID, userID, amount):
             let bid = Bid(id: bidID, userID: userID, amount: amount)
-            domain.activeBusiness.auction.bids[bidID] = bid
+            domain.business.auction.bids[bidID] = bid
 
         case let .bidCanceled(bidID):
-            domain.activeBusiness.auction.bids[bidID]!.canceled = true
+            domain.business.auction.bids[bidID]!.canceled = true
 
-        case let .saleOpened(saleID, owner, price):
-            let sale = Sale(id: saleID, domainID: domain.id, owner: owner, price: price)
-            domain.activeBusiness = .sale(sale)
+        case let .saleOpened(owner, price):
+            domain.business = .sale(Sale(owner: owner, price: price))
 
-        case .saleCanceled:
-            domain.activeBusiness.sale.status = .canceled
-            domain.archivedBusiness.append(domain.activeBusiness)
-            domain.activeBusiness = .none
-
-        case let .purchaseRequested(purchaseID, userID):
-            let sale: Sale = domain.activeBusiness.sale
-            
-            sale.activePurchaseRequest = Purchase(
-                id       : purchaseID,
-                userID   : userID,
-                domainID : sale.domainID,
-                price    : sale.price,
-                status   : .pending
-            )
+        case let .purchaseRequested(userID):
+            var sale: Sale = domain.business.sale
+            sale.purchase = Sale.Purchase(userID: userID, price: sale.price)
+            domain.business.sale = sale
             
         case .purchaseCanceled:
-            let sale: Sale = domain.activeBusiness.sale
-            let purchase: Purchase = sale.activePurchaseRequest
-            
-            purchase.status = .canceled
-            sale.archivedPurchaseRequests[purchase.id] = purchase
-            sale.activePurchaseRequest = nil
-
-        case .purchaseCompleted:
-            let sale: Sale = domain.activeBusiness.sale
-            
-            sale.activePurchaseRequest.status = .completed
-            sale.status = .completed
-            domain.archivedBusiness.append(domain.activeBusiness)
-            domain.activeBusiness = .none
+            domain.business.sale.purchase = .none
 
         }
         
