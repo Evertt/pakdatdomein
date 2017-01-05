@@ -1,4 +1,4 @@
-final class User: AggregateRoot {
+final class User {
     let id: ID
     let name: Name
     var email: Email
@@ -40,6 +40,22 @@ final class User: AggregateRoot {
         }
         
         return apply(event: .emailChanged(newEmail: email))
+    }
+    
+    static func apply<U>(event: Event) -> U {
+        fatalError()
+    }
+    
+    func apply<U>(event: Event) -> U {
+        fatalError()
+    }
+    
+    static func apply(event: Event) {
+        fatalError()
+    }
+    
+    func apply(event: Event) {
+        fatalError()
     }
 }
 

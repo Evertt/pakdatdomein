@@ -1,9 +1,9 @@
-struct ID: Hashable, CustomStringConvertible {
+public struct ID: Hashable, CustomStringConvertible {
     static var seed = 0
-    let hashValue   : Int
-    let description : String
+    public let hashValue   : Int
+    public let description : String
     
-    init() {
+    public init() {
         ID.seed += 1
         self.init(ID.seed)
     }
@@ -13,13 +13,13 @@ struct ID: Hashable, CustomStringConvertible {
         description = "\(id)"
     }
     
-    static func ==(left: ID, right: ID) -> Bool {
+    public static func ==(left: ID, right: ID) -> Bool {
         return left.hashValue == right.hashValue
     }
 }
 
 extension ID: ExpressibleByIntegerLiteral {
-    init(integerLiteral value: Int) {
+    public init(integerLiteral value: Int) {
         self.init(value)
     }
 }

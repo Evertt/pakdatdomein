@@ -6,7 +6,7 @@ extension User {
     }
 }
 
-extension User: CommandHandler {
+extension User {
     static func handle(command: Command, for user: User!) throws -> User {
         switch command {
 

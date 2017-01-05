@@ -1,91 +1,113 @@
 extension Domain {
-    enum Event {
-        case domainFound(domainID: ID, url: URL)
-        case domainImported(domainID: ID, url: URL, userID: ID)
-        case domainGrabbed
-        case domainLost
-        case domainChangedOwner(newOwner: Owner)
+    struct DomainFound        : Event { let id: ID, url: URL }
+    struct DomainImported     : Event { let id: ID, url: URL, userID: ID }
+    struct DomainGrabbed      : Event { }
+    struct DomainChangedOwner : Event { let newOwner: Owner }
+    
+    struct AuctionOpened      : Event { let owner: Owner, start: Date, end: Date }
+    struct AuctionCanceled    : Event { }
+    struct AuctionCompleted   : Event { }
+    struct AuctionExtended    : Event { let newEndDate: Date }
+    
+    struct BidAdded           : Event { let bidID: ID, userID: ID, amount: Money }
+    struct BidCanceled        : Event { let bidID: ID }
+    
+    struct SaleOpened         : Event { let owner: Owner, price: Money }
+    struct SaleCanceled       : Event { }
 
-        case auctionOpened(owner: Owner, start: Date, end: Date)
-        case auctionCanceled
-        case auctionCompleted
-        case auctionExtended(newEndDate: Date)
-        
-        case bidAdded(bidID: ID, userID: ID, amount: Money)
-        case bidCanceled(bidID: ID)
-
-        case saleOpened(owner: Owner, price: Money)
-        case saleCanceled
-
-        case purchaseRequested(userID: ID)
-        case purchaseCanceled
-        case purchaseCompleted
-    }
+    struct PurchaseRequested  : Event { let userID: ID }
+    struct PurchaseCanceled   : Event { }
+    struct PurchaseCompleted  : Event { }
 }
 
 extension Domain {
-    static func apply(event: Event, to domain: Domain!) -> Domain {
-        switch event {
-        
-        case let .domainImported(domainID, url, userID):
-            return Domain(id: domainID, url: url, owner: .user(userID: userID))
-            
-        case let .domainFound(domainID, url):
-            return Domain(id: domainID, url: url, owner: nil)
-            
-        case .domainGrabbed:
-            domain.owner = .us
-        
-        case .domainLost: break
-//            switch domain.activeBusiness {
-//            case let .sale(sale)?:
-//                try! sale.cancel()
-//            case let .auction(auction)?:
-//                try! auction.cancel()
-//            default:
-//                break
-//            }
+    static let applies = __(
+        ~domainFound,
+        ~domainImported,
+        ~domainGrabbed,
+        ~domainChangedOwner,
+        ~auctionOpened,
+        ~auctionCanceled,
+        ~auctionCompleted,
+        ~auctionExtended,
+        ~bidAdded,
+        ~bidCanceled,
+        ~saleOpened,
+        ~saleCanceled,
+        ~purchaseRequested,
+        ~purchaseCanceled,
+        ~purchaseCompleted
+    )
 
-        case let .domainChangedOwner(newOwner):
-            domain.owner = newOwner
+    static func domainFound(event: DomainFound) -> Domain {
+        return Domain(id: event.id, url: event.url, owner: nil)
+    }
 
-        case let .auctionOpened(owner, start, end):
-            let auction = Auction(
-                owner: owner,
-                bids: [:],
-                start: start,
-                end: end
-            )
+    static func domainImported(event: DomainImported) -> Domain {
+        return Domain(
+            id    : event.id,
+            url   : event.url,
+            owner : .user(userID: event.userID)
+        )
+    }
 
-            domain.business = .auction(auction)
+    func domainGrabbed(event: DomainGrabbed) {
+        owner = .us
+    }
 
-        case .auctionCanceled, .auctionCompleted,
-             .saleCanceled, .purchaseCompleted:
-            domain.business = .none
+    func domainChangedOwner(event: DomainChangedOwner) {
+        owner = event.newOwner
+    }
 
-        case let .auctionExtended(newEndDate):
-            domain.business.auction.end = newEndDate
+    func auctionOpened(event: AuctionOpened) {
+        auction = Auction(
+            owner: event.owner,
+            start: event.start,
+            end: event.end
+        )
+    }
 
-        case let .bidAdded(bidID, userID, amount):
-            let bid = Bid(id: bidID, userID: userID, amount: amount)
-            domain.business.auction.bids[bidID] = bid
+    func auctionCanceled(event: AuctionCanceled) {
+        business = .none
+    }
 
-        case let .bidCanceled(bidID):
-            domain.business.auction.bids[bidID]!.canceled = true
+    func auctionCompleted(event: AuctionCompleted) {
+        business = .none
+    }
 
-        case let .saleOpened(owner, price):
-            domain.business = .sale(Sale(owner: owner, price: price))
+    func auctionExtended(event: AuctionExtended) {
+        auction.end = event.newEndDate
+    }
 
-        case let .purchaseRequested(userID):
-            var sale: Sale = domain.business.sale
-            sale.purchase = Sale.Purchase(userID: userID, price: sale.price)
-            domain.business.sale = sale
-            
-        case .purchaseCanceled:
-            domain.business.sale.purchase = .none
+    func bidAdded(event: BidAdded) {
+        auction.bids[event.bidID] = Auction.Bid(
+            id     : event.bidID,
+            userID : event.userID,
+            amount : event.amount
+        )
+    }
 
-        }
-        
-        return domain
+    func bidCanceled(event: BidCanceled) {
+        auction.bids[event.bidID]!.canceled = true
+    }
+
+    func saleOpened(event: SaleOpened) {
+        sale = Sale(owner: event.owner, price: event.price)
+    }
+
+    func saleCanceled(event: SaleCanceled) {
+        business = .none
+    }
+    
+    func purchaseRequested(event: PurchaseRequested) {
+        sale.purchase = Sale.Purchase(userID: event.userID, price: sale.price)
+    }
+
+    func purchaseCanceled(event: PurchaseCanceled) {
+        sale.purchase = .none
+    }
+
+    func purchaseCompleted(event: PurchaseCompleted) {
+        business = .none
     }
 }
