@@ -1,15 +1,15 @@
 extension Optional where Wrapped: AggregateRoot {
-    func apply(_ event: Event, isNew: Bool = false) -> Wrapped {
+    func apply(_ fact: Fact, isNew: Bool = false) -> Wrapped {
         switch self {
         case .none:
-            return Wrapped.apply(event, isNew: isNew)
+            return Wrapped.apply(fact, isNew: isNew)
         case .some(let aggregateRoot):
-            aggregateRoot.apply(event, isNew: isNew)
+            aggregateRoot.apply(fact, isNew: isNew)
             return aggregateRoot
         }
     }
     
-    public func handle(_ task: Task) throws -> Wrapped {
+    func handle(_ task: Task) throws -> Wrapped {
         switch self {
         case .none:
             return try Wrapped.handle(task)
@@ -20,29 +20,29 @@ extension Optional where Wrapped: AggregateRoot {
     }
 }
 
-public protocol _Optional {
+protocol _Optional {
     associatedtype Wrapped
     var optional: Wrapped? { get }
 }
 
 extension Optional: _Optional {
-    public var optional: Wrapped? {
+    var optional: Wrapped? {
         return self
     }
 }
 
 extension _Optional where Wrapped == AggregateRoot {
-    func apply(_ event: Event, isNew: Bool = false, on arType: AggregateRoot.Type) -> AggregateRoot {
+    func apply(_ fact: Fact, isNew: Bool = false, on arType: AggregateRoot.Type) -> AggregateRoot {
         switch optional {
         case .none:
-            return arType.apply(event, isNew: isNew)
+            return arType.apply(fact, isNew: isNew)
         case .some(let aggregateRoot):
-            aggregateRoot.apply(event, isNew: isNew)
+            aggregateRoot.apply(fact, isNew: isNew)
             return aggregateRoot
         }
     }
     
-    public func handle(_ task: Task, on arType: AggregateRoot.Type) throws -> AggregateRoot {
+    func handle(_ task: Task, on arType: AggregateRoot.Type) throws -> AggregateRoot {
         switch optional {
         case .none:
             return try arType.handle(task)

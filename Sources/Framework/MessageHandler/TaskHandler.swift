@@ -1,6 +1,6 @@
 public protocol TaskHandler {
     var arType: AggregateRoot.Type { get }
-    var cType: Task.Type { get }
+    var taskType: Task.Type { get }
     
     @discardableResult
     func handle<AR: AggregateRoot>(task: Task, for aggregateRoot: AR?) throws -> AR
@@ -9,40 +9,51 @@ public protocol TaskHandler {
 struct TypeTaskHandler<AR: AggregateRoot, C: Task>: TaskHandler {
     typealias Handler = (C) throws -> AR
     let handler: Handler
-    let cType: Task.Type
+    let taskType: Task.Type
     let arType: AggregateRoot.Type
     
     init(handler: @escaping Handler) {
         self.handler = handler
-        self.cType = C.self
+        self.taskType = C.self
         self.arType = AR.self
     }
     
     func handle<T: AggregateRoot>(task: Task, for aggregateRoot: T?) throws -> T {
-        let task = task as! C
+        guard aggregateRoot is AR? else {
+            throw Error.aggregateRootNotRightType(expected: AR.self, got: T.self)
+        }
         
-        return try handler(task) as! T
+        guard let cTask = task as? C else {
+            throw Error.taskNotRightType(expected: C.self, got: type(of: task))
+        }
+        
+        return try handler(cTask) as! T
     }
 }
 
 struct InstanceTaskHandler<AR: AggregateRoot, C: Task>: TaskHandler {
     typealias Handler = (AR) -> (C) throws -> Void
     let handler: Handler
-    let cType: Task.Type
+    let taskType: Task.Type
     let arType: AggregateRoot.Type
     
     init(handler: @escaping Handler) {
         self.handler = handler
-        self.cType = C.self
+        self.taskType = C.self
         self.arType = AR.self
     }
     
     func handle<T: AggregateRoot>(task: Task, for aggregateRoot: T?) throws -> T {
-        let task = task as! C
-        let aggregateRoot = aggregateRoot as! AR
+        guard let ar = aggregateRoot as? AR else {
+            throw Error.aggregateRootNotRightType(expected: AR.self, got: T.self)
+        }
         
-        try handler(aggregateRoot)(task)
+        guard let cTask = task as? C else {
+            throw Error.taskNotRightType(expected: C.self, got: type(of: task))
+        }
         
-        return aggregateRoot as! T
+        try handler(ar)(cTask)
+        
+        return ar as! T
     }
 }

@@ -5,7 +5,7 @@ final class Domain: AggregateRoot {
     var business : Business!
 
     var version = 0
-    var uncommittedEvents = [Event]()
+    var uncommittedFacts = [Fact]()
 
     var sale: Sale! {
         get { return business.sale     }

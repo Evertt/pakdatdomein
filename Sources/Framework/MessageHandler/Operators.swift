@@ -1,15 +1,15 @@
 prefix operator ~
 
-public prefix func ~<AR: AggregateRoot, E: Event>(applyMethod: @escaping (E) -> AR) -> EventApplier {
-    return TypeEventApplier(applier: applyMethod)
+public prefix func ~<AR: AggregateRoot, E: Fact>(applyMethod: @escaping (E) -> AR) -> FactApplier {
+    return TypeFactApplier(applier: applyMethod)
 }
 
-public prefix func ~<AR: AggregateRoot, E: Event>(applyMethod: @escaping (AR) -> (E) -> Void) -> EventApplier {
-    return InstanceEventApplier(applier: applyMethod)
+public prefix func ~<AR: AggregateRoot, E: Fact>(applyMethod: @escaping (AR) -> (E) -> Void) -> FactApplier {
+    return InstanceFactApplier(applier: applyMethod)
 }
 
-public func __(_ appliers: EventApplier...) -> [String:EventApplier] {
-    var dict = [String:EventApplier]()
+public func __(_ appliers: FactApplier...) -> [String:FactApplier] {
+    var dict = [String:FactApplier]()
     
     for applier in appliers {
         let type = "\(applier.type)"
@@ -31,7 +31,7 @@ public func __(_ handlers: TaskHandler...) -> [String:TaskHandler] {
     var dict = [String:TaskHandler]()
     
     for handler in handlers {
-        let type = "\(handler.cType)"
+        let type = "\(handler.taskType)"
         dict[type] = handler
     }
     

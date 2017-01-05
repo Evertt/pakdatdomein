@@ -1,11 +1,11 @@
-public protocol EventApplier {
+public protocol FactApplier {
     var type: Any.Type { get }
     
     @discardableResult
-    func apply<AR: AggregateRoot>(event: Event, on aggregateRoot: AR?) -> AR
+    func apply<AR: AggregateRoot>(fact: Fact, on aggregateRoot: AR?) -> AR
 }
 
-struct TypeEventApplier<AR: AggregateRoot, E: Event>: EventApplier {
+struct TypeFactApplier<AR: AggregateRoot, E: Fact>: FactApplier {
     typealias Applier = (E) -> AR
     let applier: Applier
     let type: Any.Type
@@ -15,12 +15,12 @@ struct TypeEventApplier<AR: AggregateRoot, E: Event>: EventApplier {
         self.type = E.self
     }
     
-    func apply<T: AggregateRoot>(event: Event, on _: T?) -> T {
-        return applier(event as! E) as! T
+    func apply<T: AggregateRoot>(fact: Fact, on _: T?) -> T {
+        return applier(fact as! E) as! T
     }
 }
 
-struct InstanceEventApplier<AR: AggregateRoot, E: Event>: EventApplier {
+struct InstanceFactApplier<AR: AggregateRoot, E: Fact>: FactApplier {
     typealias Applier = (AR) -> (E) -> Void
     let applier: Applier
     let type: Any.Type
@@ -30,11 +30,11 @@ struct InstanceEventApplier<AR: AggregateRoot, E: Event>: EventApplier {
         self.type = E.self
     }
     
-    func apply<T: AggregateRoot>(event: Event, on aggregateRoot: T?) -> T {
-        let event = event as! E
+    func apply<T: AggregateRoot>(fact: Fact, on aggregateRoot: T?) -> T {
+        let fact = fact as! E
         let aggregateRoot = aggregateRoot as! AR
         
-        applier(aggregateRoot)(event)
+        applier(aggregateRoot)(fact)
         
         return aggregateRoot as! T
     }

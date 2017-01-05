@@ -1,12 +1,12 @@
-public class EventBus {
-    var handlers: [String:[EventHandlerMethod]]
+public class FactBus {
+    var handlers: [String:[FactHandlerMethod]]
     
-    init(handlers: [EventHandler]) {
-        var dict = [String:[EventHandlerMethod]]()
+    init(handlers: [FactHandler]) {
+        var dict = [String:[FactHandlerMethod]]()
         
         for handler in handlers {
             for method in type(of: handler).handles {
-                let key = method.eventType
+                let key = method.factType
                 dict[key].append(method)
             }
         }
@@ -14,7 +14,7 @@ public class EventBus {
         self.handlers = dict
     }
     
-    func fire<E: Event>(event: E) {
+    func fire<E: Fact>(fact: E) {
         let key = "\(E.self)"
         
         guard let handlers = self.handlers[key] else {
@@ -22,13 +22,14 @@ public class EventBus {
         }
         
         for handler in handlers {
-            handler.handle(event: event)
+            handler.handle(fact: fact)
         }
     }
 }
 
 protocol ArrayType: Collection, ExpressibleByArrayLiteral {
     mutating func append(_ newElement: Iterator.Element)
+    mutating func append<S : Sequence>(contentsOf newElements: S) where S.Iterator.Element == Element
 }
 
 extension Array: ArrayType {}
@@ -44,6 +45,12 @@ extension Optional where Wrapped: ArrayType {
         case .some(var array):
             array.append(newElement)
             self = .some(array)
+        }
+    }
+
+    mutating func append<S : Sequence>(contentsOf newElements: S) where S.Iterator.Element == Wrapped.Iterator.Element {
+        for newElement in newElements {
+            append(newElement)
         }
     }
 }
