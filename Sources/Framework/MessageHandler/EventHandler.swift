@@ -1,30 +1,30 @@
-public protocol FactHandler {
-    static var handles: [FactHandlerMethod] { get }
+public protocol EventHandler {
+    static var handles: [EventHandlerMethod] { get }
 }
 
-public protocol FactHandlerMethod {
-    var factType: String { get }
-    func handle<T: Fact>(fact: T)
+public protocol EventHandlerMethod {
+    var eventType: String { get }
+    func handle<T: Event>(event: T)
 }
 
-struct AFactHandlerMethod<E: Fact>: FactHandlerMethod {
+struct AnEventHandlerMethod<E: Event>: EventHandlerMethod {
     let handler: (E) -> Void
-    let factType: String
+    let eventType: String
     
     init(handler: @escaping (E) -> Void) {
         self.handler = handler
-        factType = "\(E.self)"
+        eventType = "\(E.self)"
     }
     
-    func handle<T: Fact>(fact: T) {
-        guard let fact = fact as? E else {
+    func handle<T: Event>(event: T) {
+        guard let event = event as? E else {
             fatalError("This should never happen...")
         }
         
-        handler(fact)
+        handler(event)
     }
 }
 
-public prefix func ~<E: Fact>(handleMethod: @escaping (E) -> Void) -> FactHandlerMethod {
-    return AFactHandlerMethod(handler: handleMethod)
+public prefix func ~<E: Event>(handleMethod: @escaping (E) -> Void) -> EventHandlerMethod {
+    return AnEventHandlerMethod(handler: handleMethod)
 }

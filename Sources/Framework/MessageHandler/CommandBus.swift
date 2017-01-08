@@ -1,9 +1,9 @@
 public class CommandBus {
-    let commandHandlers: [String:TaskHandler]
+    let commandHandlers: [String:CommandHandler]
     let repository: Repository
     
     public init(repository: Repository, aggregateRoots: [AggregateRoot.Type]) {
-        var dict = [String:TaskHandler]()
+        var dict = [String:CommandHandler]()
         
         for entity in aggregateRoots {
             dict += entity.handles
@@ -14,12 +14,14 @@ public class CommandBus {
     }
     
     public func send(_ command: Command) throws {
-        guard let handler = commandHandlers["\(type(of: command))"] else {
+        let commandType = "\(type(of: command))"
+        
+        guard let handler = commandHandlers[commandType] else {
             fatalError()
         }
         
         let aggregateRoot = repository.get(handler.arType, byID: command.id)
-        try repository.save(aggregateRoot.handle(command.task, on: handler.arType))
+        try repository.save(aggregateRoot.handle(command, on: handler.arType))
     }
 }
 

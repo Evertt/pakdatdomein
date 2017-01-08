@@ -1,5 +1,5 @@
 extension Domain {
-    enum Owner {
+    public enum Owner {
         case us, user(userID: ID)
     }
 }

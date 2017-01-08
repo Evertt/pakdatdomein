@@ -1,15 +1,15 @@
 prefix operator ~
 
-public prefix func ~<AR: AggregateRoot, E: Fact>(applyMethod: @escaping (E) -> AR) -> FactApplier {
-    return TypeFactApplier(applier: applyMethod)
+public prefix func ~<AR: AggregateRoot, E: Event>(applyMethod: @escaping (E) -> AR) -> EventApplier {
+    return TypeEventApplier(applier: applyMethod)
 }
 
-public prefix func ~<AR: AggregateRoot, E: Fact>(applyMethod: @escaping (AR) -> (E) -> Void) -> FactApplier {
-    return InstanceFactApplier(applier: applyMethod)
+public prefix func ~<AR: AggregateRoot, E: Event>(applyMethod: @escaping (AR) -> (E) -> Void) -> EventApplier {
+    return InstanceEventApplier(applier: applyMethod)
 }
 
-public func __(_ appliers: FactApplier...) -> [String:FactApplier] {
-    var dict = [String:FactApplier]()
+public func __(_ appliers: EventApplier...) -> [String:EventApplier] {
+    var dict = [String:EventApplier]()
     
     for applier in appliers {
         let type = "\(applier.type)"
@@ -19,19 +19,19 @@ public func __(_ appliers: FactApplier...) -> [String:FactApplier] {
     return dict
 }
 
-public prefix func ~<AR: AggregateRoot, C: Task>(handleMethod: @escaping (C) throws -> AR) -> TaskHandler {
-    return TypeTaskHandler(handler: handleMethod)
+public prefix func ~<AR: AggregateRoot, C: Command>(handleMethod: @escaping (C) throws -> AR) -> CommandHandler {
+    return TypeCommandHandler(handler: handleMethod)
 }
 
-public prefix func ~<AR: AggregateRoot, C: Task>(handleMethod: @escaping (AR) -> (C) throws -> Void) -> TaskHandler {
-    return InstanceTaskHandler(handler: handleMethod)
+public prefix func ~<AR: AggregateRoot, C: Command>(handleMethod: @escaping (AR) -> (C) throws -> Void) -> CommandHandler {
+    return InstanceCommandHandler(handler: handleMethod)
 }
 
-public func __(_ handlers: TaskHandler...) -> [String:TaskHandler] {
-    var dict = [String:TaskHandler]()
+public func __(_ handlers: CommandHandler...) -> [String:CommandHandler] {
+    var dict = [String:CommandHandler]()
     
     for handler in handlers {
-        let type = "\(handler.taskType)"
+        let type = "\(handler.commandType)"
         dict[type] = handler
     }
     

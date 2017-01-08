@@ -6,7 +6,7 @@ final class User: AggregateRoot {
     var active: Bool = true
     
     var version = 0
-    var uncommittedFacts = [Fact]()
+    var uncommittedEvents = [Event]()
 
     init(id: ID, name: Name, email: Email, password: Password) {
         self.id       = id

@@ -1,12 +1,12 @@
-public class FactBus {
-    var handlers: [String:[FactHandlerMethod]]
+public class EventBus {
+    var handlers: [String:[EventHandlerMethod]]
     
-    init(handlers: [FactHandler]) {
-        var dict = [String:[FactHandlerMethod]]()
+    init(handlers: [EventHandler]) {
+        var dict = [String:[EventHandlerMethod]]()
         
         for handler in handlers {
             for method in type(of: handler).handles {
-                let key = method.factType
+                let key = method.eventType
                 dict[key].append(method)
             }
         }
@@ -14,7 +14,7 @@ public class FactBus {
         self.handlers = dict
     }
     
-    func fire<E: Fact>(fact: E) {
+    func fire<E: Event>(event: E) {
         let key = "\(E.self)"
         
         guard let handlers = self.handlers[key] else {
@@ -22,7 +22,7 @@ public class FactBus {
         }
         
         for handler in handlers {
-            handler.handle(fact: fact)
+            handler.handle(event: event)
         }
     }
 }

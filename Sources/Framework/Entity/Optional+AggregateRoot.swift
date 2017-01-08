@@ -1,20 +1,20 @@
 extension Optional where Wrapped: AggregateRoot {
-    func apply(_ fact: Fact, isNew: Bool = false) -> Wrapped {
+    func apply(_ event: Event, isNew: Bool = false) -> Wrapped {
         switch self {
         case .none:
-            return Wrapped.apply(fact, isNew: isNew)
+            return Wrapped.apply(event, isNew: isNew)
         case .some(let aggregateRoot):
-            aggregateRoot.apply(fact, isNew: isNew)
+            aggregateRoot.apply(event, isNew: isNew)
             return aggregateRoot
         }
     }
     
-    func handle(_ task: Task) throws -> Wrapped {
+    func handle(_ command: Command) throws -> Wrapped {
         switch self {
         case .none:
-            return try Wrapped.handle(task)
+            return try Wrapped.handle(command)
         case .some(let aggregateRoot):
-            try aggregateRoot.handle(task)
+            try aggregateRoot.handle(command)
             return aggregateRoot
         }
     }
@@ -32,22 +32,22 @@ extension Optional: _Optional {
 }
 
 extension _Optional where Wrapped == AggregateRoot {
-    func apply(_ fact: Fact, isNew: Bool = false, on arType: AggregateRoot.Type) -> AggregateRoot {
+    func apply(_ event: Event, isNew: Bool = false, on arType: AggregateRoot.Type) -> AggregateRoot {
         switch optional {
         case .none:
-            return arType.apply(fact, isNew: isNew)
+            return arType.apply(event, isNew: isNew)
         case .some(let aggregateRoot):
-            aggregateRoot.apply(fact, isNew: isNew)
+            aggregateRoot.apply(event, isNew: isNew)
             return aggregateRoot
         }
     }
     
-    func handle(_ task: Task, on arType: AggregateRoot.Type) throws -> AggregateRoot {
+    func handle(_ command: Command, on arType: AggregateRoot.Type) throws -> AggregateRoot {
         switch optional {
         case .none:
-            return try arType.handle(task)
+            return try arType.handle(command)
         case .some(let aggregateRoot):
-            try aggregateRoot.handle(task)
+            try aggregateRoot.handle(command)
             return aggregateRoot
         }
     }

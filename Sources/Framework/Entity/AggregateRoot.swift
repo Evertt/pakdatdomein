@@ -4,69 +4,65 @@ public protocol Entity: class {
 
 public protocol AggregateRoot: Entity {
     var version: Int { get set }
-    var uncommittedFacts: [Fact] { get set }
+    var uncommittedEvents: [Event] { get set }
     
-    static var handles: [String:TaskHandler] { get }
-    static var applies: [String:FactApplier] { get }
+    static var applies: [String:EventApplier]    { get }
+    static var handles: [String:CommandHandler]  { get }
 }
 
 extension AggregateRoot {
-    static func load(from history: [Fact]?) -> Self? {
-        return history?.reduce(nil) { $0.apply($1) }
-    }
-
     static func load(from history: [Event]?) -> Self? {
-        return history?.reduce(nil) { $0.apply($1.fact) }
+        return history?.reduce(nil) { $0.apply($1) }
     }
     
     @discardableResult
-    func handle(_ task: Task) throws -> Self {
-        guard let taskHandler = Self.handles[task.type] else {
-            throw Error.noTaskHandlerFound(task: type(of: task))
+    func handle(_ command: Command) throws -> Self {
+        guard let commandHandler = Self.handles[command.type] else {
+            throw Error.noCommandHandlerFound(command: type(of: command))
         }
         
-        return try taskHandler.handle(task: task, for: self)
+        return try commandHandler.handle(command: command, for: self)
     }
     
-    static func handle(_ task: Task) throws -> Self {
-        guard let taskHandler = handles[task.type] else {
-            throw Error.noTaskHandlerFound(task: type(of: task))
+    static func handle(_ command: Command) throws -> Self {
+        guard let commandHandler = handles[command.type] else {
+            throw Error.noCommandHandlerFound(command: type(of: command))
         }
         
-        return try taskHandler.handle(task: task, for: nil)
+        return try commandHandler.handle(command: command, for: nil)
     }
     
-    public func apply(_ fact: Fact) {
-        apply(fact, isNew: true)
+    public func apply(_ event: Event) {
+        apply(event, isNew: true)
     }
     
-    public static func apply(_ fact: Fact) -> Self {
-        return apply(fact, isNew: true)
+    public static func apply(_ event: Event) -> Self {
+        return apply(event, isNew: true)
     }
     
-    func apply(_ fact: Fact, isNew: Bool) {
-        guard let factApplier = Self.applies[fact.type] else {
-            print("No fact applier found for \(type(of: fact))")
+    func apply(_ event: Event, isNew: Bool) {
+        guard let eventApplier = Self.applies[event.type] else {
+            print("No event applier found for \(type(of: event))")
             return
         }
         
-        if isNew { uncommittedFacts.append(fact) }
-        factApplier.apply(fact: fact, on: self)
+        if isNew { uncommittedEvents.append(event) }
+        eventApplier.apply(event: event, on: self)
     }
     
-    static func apply(_ fact: Fact, isNew: Bool) -> Self {
-        guard let factApplier = applies[fact.type] else {
-            fatalError("No fact applier found for \(type(of: fact))")
+    static func apply(_ event: Event, isNew: Bool) -> Self {
+        guard let eventApplier = applies[event.type] else {
+            fatalError("No event applier found for \(type(of: event))")
         }
         
-        let entity: Self = factApplier.apply(fact: fact, on: nil)
-        if isNew { entity.uncommittedFacts.append(fact) }
+        let entity: Self = eventApplier.apply(event: event, on: nil)
+        if isNew { entity.uncommittedEvents.append(event) }
         return entity
     }
 }
 
 enum Error: Swift.Error {
-    case noTaskHandlerFound(task: Task.Type)
-    case taskNotRightType(expected: Task.Type, got: Task.Type)
+    case noCommandHandlerFound(command: Command.Type)
+    case commandNotRightType(expected: Command.Type, got: Command.Type)
     case aggregateRootNotRightType(expected: AggregateRoot.Type, got: AggregateRoot.Type)
 }
