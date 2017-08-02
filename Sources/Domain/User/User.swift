@@ -16,9 +16,3 @@ public final class User: AggregateRoot {
         self.password = password
     }
 }
-
-extension User {
-    enum Error: Swift.Error {
-        case invalidStuff
-    }
-}

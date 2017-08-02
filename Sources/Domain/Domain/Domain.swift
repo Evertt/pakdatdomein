@@ -28,7 +28,13 @@ public final class Domain: AggregateRoot {
 
 extension Domain: CustomDebugStringConvertible {
     public var debugDescription: String {
-        let dict: [String:Any] = ["id": id, "url": url, "owner": (owner ?? nil) as Any, "business": (business ?? nil) as Any]
+        let dict: [String:Any] = [
+            "id": id,
+            "url": url,
+            "owner": owner as Any,
+            "business": business as Any
+        ]
+        
         return "\(dict)"
     }
 }

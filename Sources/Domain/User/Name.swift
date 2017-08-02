@@ -2,9 +2,9 @@ extension User {
     public struct Name {
         let value: String
         
-        init?(_ value: String) {
+        init(_ value: String) throws {
             guard case 1...50 = value.characters.count else {
-                return nil
+                throw Error.invalidName(value)
             }
             
             self.value = value

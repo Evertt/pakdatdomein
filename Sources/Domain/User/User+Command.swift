@@ -36,29 +36,21 @@ extension User {
 
 extension User {
     static func register(command: Register) throws -> User {
-        guard
-            let name     = Name(command.name),
-            let email    = Email(command.email),
-            let password = Password(command.password)
-        else {
-            throw Error.invalidStuff
-        }
+        let name     = try Name(command.name)
+        let email    = try Email(command.email)
+        let password = try Password(command.password)
 
         return apply(Registered(id: command.id, version: 1, name: name, email: email, password: password))
     }
     
     func changeEmail(command: ChangeEmail) throws {
-        guard let email = Email(command.newEmail) else {
-            throw Error.invalidStuff
-        }
+        let email = try Email(command.newEmail)
         
         apply(EmailChanged(id: id, version: version, newEmail: email))
     }
     
     func changePassword(command: ChangePassword) throws {
-        guard let password = Password(command.newPassword) else {
-            throw Error.invalidStuff
-        }
+        let password = try Password(command.newPassword)
         
         apply(PasswordChanged(id: id, version: version, newPassword: password))
     }

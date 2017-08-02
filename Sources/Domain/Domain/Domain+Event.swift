@@ -51,11 +51,11 @@ extension Domain {
         )
     }
 
-    func auctionCanceled(event: AuctionCanceled) {
+    func auctionCanceled(_: AuctionCanceled) {
         business = .none
     }
 
-    func auctionCompleted(event: AuctionCompleted) {
+    func auctionCompleted(_: AuctionCompleted) {
         business = .none
     }
 
@@ -79,7 +79,7 @@ extension Domain {
         sale = Sale(owner: event.owner, price: event.price)
     }
 
-    func saleCanceled(event: SaleCanceled) {
+    func saleCanceled(_: SaleCanceled) {
         business = .none
     }
     
@@ -87,11 +87,11 @@ extension Domain {
         sale.purchase = Sale.Purchase(userID: event.userID, price: sale.price)
     }
 
-    func purchaseCanceled(event: PurchaseCanceled) {
+    func purchaseCanceled(_: PurchaseCanceled) {
         sale.purchase = .none
     }
 
-    func purchaseCompleted(event: PurchaseCompleted) {
+    func purchaseCompleted(_: PurchaseCompleted) {
         business = .none
     }
 }

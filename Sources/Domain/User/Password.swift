@@ -1,13 +1,13 @@
 extension User {
     public struct Password {
-        let value: String
+        let hash: String
         
-        init?(_ value: String) {
-            guard let value = Password.hash(value) else {
-                return nil
+        init(_ value: String) throws {
+            guard let hash = Password.hash(value) else {
+                throw Error.invalidPassword(value)
             }
             
-            self.value = value
+            self.hash = hash
         }
         
         static func hash(_ str: String) -> String? {
