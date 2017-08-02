@@ -1,5 +1,5 @@
 extension Domain {
-    public struct FindDomain: Command {
+    public struct CreateFoundDomain: Command {
         public let id: ID, url: URL
         
         public init(id: ID, url: URL) {
@@ -64,7 +64,7 @@ extension Domain {
 }
 
 extension Domain {
-    static func findDomain(command: FindDomain) -> Domain {
+    static func createFoundDomain(command: CreateFoundDomain) -> Domain {
         return apply(DomainFound(id: command.id, version: 1, url: command.url))
     }
 
@@ -188,7 +188,7 @@ extension Domain {
 
 extension Domain {
     public static let handles = __(
-        ~findDomain,
+        ~createFoundDomain,
         ~putOnSale,
         ~requestPurchase,
         ~cancelSale,

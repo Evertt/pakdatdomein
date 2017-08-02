@@ -34,7 +34,7 @@ extension Domain {
         )
     }
 
-    func domainGrabbed(event: DomainGrabbed) {
+    func domainGrabbed(_: DomainGrabbed) {
         owner = .us
     }
 
@@ -101,14 +101,18 @@ extension Domain {
         ~domainImported,
         ~domainGrabbed,
         ~domainChangedOwner,
+        
         ~auctionOpened,
+        ~auctionExtended,
         ~auctionCanceled,
         ~auctionCompleted,
-        ~auctionExtended,
+        
         ~bidAdded,
         ~bidCanceled,
+        
         ~saleOpened,
         ~saleCanceled,
+        
         ~purchaseRequested,
         ~purchaseCanceled,
         ~purchaseCompleted
