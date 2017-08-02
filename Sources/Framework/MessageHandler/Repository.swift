@@ -22,7 +22,7 @@ public class ARepository: Repository {
     }
     
     public func getEvents(from arType: AggregateRoot.Type, with id: ID) -> [Event] {
-        let indices = self.indices[arType.type][id]?.sorted{ $0.0 < $1.0 }.map{$1}
+        let indices = self.indices[arType.type][id]?.sorted{ $0.key < $1.key }.map{$1}
         
         return $.at(events, indexes: indices ?? [])
     }

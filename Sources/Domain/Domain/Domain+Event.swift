@@ -23,14 +23,15 @@ extension Domain {
 
 extension Domain {
     static func domainFound(event: DomainFound) -> Domain {
-        return Domain(id: event.id, url: event.url, owner: nil)
+        return Domain(id: event.id, url: event.url, owner: nil, version: event.version)
     }
 
     static func domainImported(event: DomainImported) -> Domain {
         return Domain(
-            id    : event.id,
-            url   : event.url,
-            owner : .user(userID: event.userID)
+            id      : event.id,
+            url     : event.url,
+            owner   : .user(userID: event.userID),
+            version : event.version
         )
     }
 

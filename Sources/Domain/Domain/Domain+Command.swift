@@ -189,15 +189,19 @@ extension Domain {
 extension Domain {
     public static let handles = __(
         ~createFoundDomain,
+
         ~putOnSale,
-        ~requestPurchase,
         ~cancelSale,
+
+        ~requestPurchase,
         ~cancelPurchase,
         ~completePurchase,
+
         ~openAuction,
+        ~extendAuction,
         ~cancelAuction,
         ~completeAuction,
-        ~extendAuction,
+
         ~addBid,
         ~cancelBid
     )

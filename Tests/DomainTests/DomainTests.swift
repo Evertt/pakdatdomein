@@ -19,17 +19,19 @@ class DomainTests: XCTestCase {
         
         let url = URL(string: "www.google.nl")!
         
-        let tasks: [Task] = [
-            Domain.FindDomain(id: domainID, url: url),
-            Domain.OpenAuction(),
-            Domain.AddBid(bidID: bid1ID, userID: user1ID, amount: Money(amount: 2, currency: .eur)),
-            Domain.AddBid(bidID: bid2ID, userID: user2ID, amount: Money(amount: 5, currency: .eur))
+        let commands: [Command] = [
+            Domain.CreateFoundDomain(id: domainID, url: url),
+            Domain.OpenAuction(id: domainID),
+            Domain.AddBid(id: domainID, bidID: bid1ID, userID: user1ID, amount: Money(amount: 2, currency: .eur)),
+            Domain.AddBid(id: domainID, bidID: bid2ID, userID: user2ID, amount: Money(amount: 5, currency: .eur))
         ]
         
-        for task in tasks {
-            try commandBus.send(task, to: domainID)
+        for command in commands {
+            try commandBus.send(command)
         }
         
-        print("🔴", repository.getEvents(byID: domainID))
+        for event in repository.getEvents(from: Domain.self, with: domainID) {
+            print("🔴", event)
+        }
     }
 }

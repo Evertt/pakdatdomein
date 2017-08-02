@@ -16,7 +16,12 @@ struct TypeEventApplier<AR: AggregateRoot, E: Event>: EventApplier {
     }
     
     func apply<T: AggregateRoot>(event: Event, on _: T?) -> T {
-        return applier(event as! E) as! T
+        let event = event as! E
+        let aggregateRoot = applier(event)
+        
+        aggregateRoot.version += 1
+        
+        return aggregateRoot as! T
     }
 }
 
