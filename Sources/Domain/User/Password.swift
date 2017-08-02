@@ -1,5 +1,5 @@
 extension User {
-    struct Password {
+    public struct Password {
         let value: String
         
         init?(_ value: String) {

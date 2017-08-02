@@ -1,5 +1,5 @@
 extension User {
-    struct Email {
+    public struct Email {
         let value: String
         
         init?(_ value: String) {

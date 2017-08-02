@@ -27,9 +27,9 @@ public class ARepository: Repository {
         return $.at(events, indexes: indices ?? [])
     }
     
-    public func getEvents(startingAt index: Index, max: Int) -> [Event] {
-        let maxIndex = Swift.max(index + max - 1, events.endIndex)
-        return Array(events[0...maxIndex])
+    public func getEvents(startingAt index: Index = 0, max: Int = Int.max) -> [Event] {
+        let maxIndex = Swift.min(index + max, events.endIndex)
+        return Array(events[0..<maxIndex])
     }
 
     public func save(_ aggregateRoot: AggregateRoot) {

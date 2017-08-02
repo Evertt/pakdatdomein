@@ -6,9 +6,9 @@ extension Domain {
     public struct DomainChangedOwner : Event { public let id: ID, version: Int, newOwner: Owner? }
     
     public struct AuctionOpened      : Event { public let id: ID, version: Int, owner: Owner, start: Date, end: Date }
+    public struct AuctionExtended    : Event { public let id: ID, version: Int, newEndDate: Date }
     public struct AuctionCanceled    : Event { public let id: ID, version: Int }
     public struct AuctionCompleted   : Event { public let id: ID, version: Int }
-    public struct AuctionExtended    : Event { public let id: ID, version: Int, newEndDate: Date }
     
     public struct BidAdded           : Event { public let id: ID, version: Int, bidID: ID, userID: ID, amount: Money }
     public struct BidCanceled        : Event { public let id: ID, version: Int, bidID: ID }
