@@ -1,7 +1,7 @@
 /*
 
-This is me trying to understand Sagas.
-This is basically me just trying stuff out so don't review this code seriously.
+// This is me trying to understand Sagas.
+// This is basically me just trying stuff out so don't review this code seriously.
 
 class DomainSaga {
     let commandBus: CommandBus

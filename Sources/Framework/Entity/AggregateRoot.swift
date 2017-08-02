@@ -42,8 +42,7 @@ extension AggregateRoot {
     
     func apply(_ event: Event, isNew: Bool) {
         guard let eventApplier = Self.applies[event.type] else {
-            print("No event applier found for \(type(of: event))")
-            return
+            fatalError("No event applier found for \(type(of: event))")
         }
         
         if isNew { uncommittedEvents.append(event) }

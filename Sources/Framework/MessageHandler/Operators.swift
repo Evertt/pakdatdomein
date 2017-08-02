@@ -37,16 +37,3 @@ public func __(_ handlers: CommandHandler...) -> [String:CommandHandler] {
     
     return dict
 }
-
-prefix operator ++
-postfix operator ++
-
-prefix func ++<N: Integer>(x: inout N) -> N {
-    x = x + 1
-    return x
-}
-
-postfix func ++<N: Integer>(x: inout N) -> N {
-    x = x + 1
-    return (x - 1)
-}

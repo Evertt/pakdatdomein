@@ -3,18 +3,18 @@ public class CommandBus {
     let repository: Repository
     
     public init(repository: Repository, aggregateRoots: [AggregateRoot.Type]) {
-        var dict = [String:CommandHandler]()
+        var handlers = [String:CommandHandler]()
         
         for entity in aggregateRoots {
-            dict.merge(dictionaries: entity.handles)
+            handlers.merge(dictionaries: entity.handles)
         }
         
         self.repository = repository
-        commandHandlers = dict
+        commandHandlers = handlers
     }
     
     public func send(_ command: Command) throws {
-        let commandType = "\(type(of: command))"
+        let commandType = command.type
         
         guard let handler = commandHandlers[commandType] else {
             fatalError()

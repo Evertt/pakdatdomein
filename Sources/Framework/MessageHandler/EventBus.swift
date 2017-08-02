@@ -1,3 +1,7 @@
+/*
+ 
+// This is just a draft. Don't review this code please.
+
 class EventBus {
     var handlers = HandlerStack()
 
@@ -33,3 +37,5 @@ class EventBus {
         }
     }
 }
+
+ */
