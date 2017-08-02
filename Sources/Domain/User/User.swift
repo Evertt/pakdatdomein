@@ -11,6 +11,7 @@ public final class User: AggregateRoot {
     init(id: ID, version: Int, name: Name, email: Email, password: Password) {
         self.id       = id
         self.version  = version
+
         self.name     = name
         self.email    = email
         self.password = password

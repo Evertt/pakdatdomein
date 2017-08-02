@@ -9,6 +9,7 @@ extension User {
         return User(
             id       : event.id,
             version  : event.version,
+
             name     : event.name,
             email    : event.email,
             password : event.password

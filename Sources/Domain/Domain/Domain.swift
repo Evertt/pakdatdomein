@@ -17,11 +17,12 @@ public final class Domain: AggregateRoot {
         set { business = .auction(newValue) }
     }
     
-    init(id: ID, url: URL, owner: Owner?, version: Int) {
+    init(id: ID, version: Int, url: URL, owner: Owner?) {
         self.id      = id
+        self.version = version
+
         self.url     = url
         self.owner   = owner
-        self.version = version
     }
 }
 
