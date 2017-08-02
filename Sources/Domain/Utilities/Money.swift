@@ -2,7 +2,7 @@ import Foundation
 
 public struct Money {
     public enum Currency: Decimal {
-        case usd = 1, eur = 1.05, gbp = 1.22
+        case usd = 1, eur = 1.17, gbp = 1.12
     }
     
     let amount   : Decimal
