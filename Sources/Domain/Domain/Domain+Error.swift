@@ -1,6 +1,12 @@
 extension Domain {
     enum Error: Swift.Error {
-        case invalidStuff
+        case businessIsActive
+        case noSaleIsRunning
+        case noAuctionIsRunning
+        case noBidIsActive(ID)
+        case purchaseIsPending
+        case noPendingPurchase
+        case ownedByOutsider
     }
     
     enum Check {
@@ -16,22 +22,22 @@ extension Domain {
         switch check {
 
         case .noBusinessIsActive where business != nil:
-            throw Error.invalidStuff
+            throw Error.businessIsActive
             
         case .auctionIsRunning where business?.auction == nil:
-            throw Error.invalidStuff
+            throw Error.noAuctionIsRunning
             
         case .saleIsRunning where business?.sale == nil:
-            throw Error.invalidStuff
+            throw Error.noSaleIsRunning
             
         case .bidIsActive(let bidID) where business?.auction?.bids[bidID]?.canceled != false:
-            throw Error.invalidStuff
+            throw Error.noBidIsActive(bidID)
             
         case .noPendingPurchase where business?.sale?.purchase != nil:
-            throw Error.invalidStuff
+            throw Error.purchaseIsPending
             
         case .purchaseIsPending where business?.sale?.purchase == nil:
-            throw Error.invalidStuff
+            throw Error.noPendingPurchase
             
         default: break
         }

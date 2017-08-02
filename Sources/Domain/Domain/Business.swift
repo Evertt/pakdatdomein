@@ -2,7 +2,7 @@ extension Domain {
     enum Business {
         case auction(Auction), sale(Sale)
         
-        var auction: Auction! {
+        var auction: Auction? {
             get {
                 switch self {
                 case let .auction(auction):
@@ -11,13 +11,9 @@ extension Domain {
                     return nil
                 }
             }
-            
-            set {
-                self = .auction(newValue)
-            }
         }
         
-        var sale: Sale! {
+        var sale: Sale? {
             get {
                 switch self {
                 case let .sale(sale):
@@ -25,10 +21,6 @@ extension Domain {
                 default:
                     return nil
                 }
-            }
-            
-            set {
-                self = .sale(newValue)
             }
         }
     }

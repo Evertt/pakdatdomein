@@ -64,26 +64,15 @@ extension Domain {
 }
 
 extension Domain {
-    public static let handles = __(
-        ~findDomain,
-        ~putOnSale,
-        ~requestPurchase,
-        ~cancelSale,
-        ~cancelPurchase,
-        ~completePurchase,
-        ~openAuction,
-        ~cancelAuction,
-        ~completeAuction,
-        ~extendAuction,
-        ~addBid,
-        ~cancelBid
-    )
-
     static func findDomain(command: FindDomain) -> Domain {
         return apply(DomainFound(id: command.id, version: 1, url: command.url))
     }
 
     func putOnSale(command: PutOnSale) throws {
+        guard let owner = owner else {
+            throw Error.ownedByOutsider
+        }
+        
         try ensure(.noBusinessIsActive)
         
         apply(SaleOpened(id: id, version: version, owner: owner, price: command.price))
@@ -127,7 +116,7 @@ extension Domain {
         
         apply(AuctionOpened(
             id      : id,
-            version : version, 
+            version : version,
             owner   : owner ?? .us,
             start   : .now,
             end     : .now + Default.durationOfAuction
@@ -195,4 +184,21 @@ extension Domain {
         
         apply(BidCanceled(id: id, version: version, bidID: command.bidID))
     }
+}
+
+extension Domain {
+    public static let handles = __(
+        ~findDomain,
+        ~putOnSale,
+        ~requestPurchase,
+        ~cancelSale,
+        ~cancelPurchase,
+        ~completePurchase,
+        ~openAuction,
+        ~cancelAuction,
+        ~completeAuction,
+        ~extendAuction,
+        ~addBid,
+        ~cancelBid
+    )
 }

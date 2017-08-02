@@ -6,7 +6,7 @@ public class CommandBus {
         var dict = [String:CommandHandler]()
         
         for entity in aggregateRoots {
-            dict += entity.handles
+            dict.merge(dictionaries: entity.handles)
         }
         
         self.repository = repository
@@ -22,11 +22,5 @@ public class CommandBus {
         
         let aggregateRoot = repository.get(handler.arType, byID: command.id)
         try repository.save(aggregateRoot.handle(command, on: handler.arType))
-    }
-}
-
-func += <K, V> ( left: inout [K:V], right: [K:V]) {
-    for (k, v) in right {
-        left.updateValue(v, forKey: k)
     }
 }

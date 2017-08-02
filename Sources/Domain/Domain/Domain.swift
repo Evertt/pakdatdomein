@@ -1,19 +1,19 @@
 public final class Domain: AggregateRoot {
     public let id: ID
     let url      : URL
-    var owner    : Owner!
-    var business : Business!
+    var owner    : Owner?
+    var business : Business?
 
     public var version = 0
     public var uncommittedEvents = [Event]()
 
     var sale: Sale! {
-        get { return business.sale       }
+        get { return business?.sale      }
         set { business = .sale(newValue) }
     }
 
     var auction: Auction! {
-        get { return business.auction       }
+        get { return business?.auction      }
         set { business = .auction(newValue) }
     }
     

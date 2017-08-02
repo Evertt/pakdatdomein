@@ -22,24 +22,6 @@ extension Domain {
 }
 
 extension Domain {
-    public static let applies = __(
-        ~domainFound,
-        ~domainImported,
-        ~domainGrabbed,
-        ~domainChangedOwner,
-        ~auctionOpened,
-        ~auctionCanceled,
-        ~auctionCompleted,
-        ~auctionExtended,
-        ~bidAdded,
-        ~bidCanceled,
-        ~saleOpened,
-        ~saleCanceled,
-        ~purchaseRequested,
-        ~purchaseCanceled,
-        ~purchaseCompleted
-    )
-
     static func domainFound(event: DomainFound) -> Domain {
         return Domain(id: event.id, url: event.url, owner: nil)
     }
@@ -111,4 +93,24 @@ extension Domain {
     func purchaseCompleted(event: PurchaseCompleted) {
         business = .none
     }
+}
+
+extension Domain {
+    public static let applies = __(
+        ~domainFound,
+        ~domainImported,
+        ~domainGrabbed,
+        ~domainChangedOwner,
+        ~auctionOpened,
+        ~auctionCanceled,
+        ~auctionCompleted,
+        ~auctionExtended,
+        ~bidAdded,
+        ~bidCanceled,
+        ~saleOpened,
+        ~saleCanceled,
+        ~purchaseRequested,
+        ~purchaseCanceled,
+        ~purchaseCompleted
+    )
 }

@@ -1,4 +1,4 @@
-public protocol Entity: class {
+public protocol Entity: class, SaysType {
     var id: ID { get }
 }
 
@@ -6,8 +6,8 @@ public protocol AggregateRoot: Entity {
     var version: Int { get set }
     var uncommittedEvents: [Event] { get set }
     
-    static var applies: [String:EventApplier]    { get }
-    static var handles: [String:CommandHandler]  { get }
+    static var applies: [String:EventApplier]   { get }
+    static var handles: [String:CommandHandler] { get }
 }
 
 extension AggregateRoot {
