@@ -40,19 +40,19 @@ extension User {
         let email    = try Email(command.email)
         let password = try Password(command.password)
 
-        return apply(Registered(id: command.id, version: 1, name: name, email: email, password: password))
+        return apply(UserRegistered(id: command.id, version: 1, name: name, email: email, password: password))
     }
     
     func changeEmail(command: ChangeEmail) throws {
         let email = try Email(command.newEmail)
         
-        apply(EmailChanged(id: id, version: version, newEmail: email))
+        apply(UserChangedEmail(id: id, version: version, newEmail: email))
     }
     
     func changePassword(command: ChangePassword) throws {
         let password = try Password(command.newPassword)
         
-        apply(PasswordChanged(id: id, version: version, newPassword: password))
+        apply(UserChangedPassword(id: id, version: version, newPassword: password))
     }
 }
 

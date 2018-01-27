@@ -1,11 +1,11 @@
 extension User {
-    public struct Registered      : Event { public let id: ID, version: Int, name: Name, email: Email, password: Password }
-    public struct EmailChanged    : Event { public let id: ID, version: Int, newEmail: Email }
-    public struct PasswordChanged : Event { public let id: ID, version: Int, newPassword: Password }
+    public struct UserRegistered      : Event { public let id: ID, version: Int, name: Name, email: Email, password: Password }
+    public struct UserChangedEmail    : Event { public let id: ID, version: Int, newEmail: Email }
+    public struct UserChangedPassword : Event { public let id: ID, version: Int, newPassword: Password }
 }
 
 extension User {
-    static func registered(event: Registered) -> User {
+    static func userRegistered(event: UserRegistered) -> User {
         return User(
             id       : event.id,
             version  : event.version,
@@ -16,19 +16,19 @@ extension User {
         )
     }
     
-    func emailChanged(event: EmailChanged) {
+    func userChangedEmail(event: UserChangedEmail) {
         email = event.newEmail
     }
 
-    func passwordChanged(event: PasswordChanged) {
+    func userChangedPassword(event: UserChangedPassword) {
         password = event.newPassword
     }
 }
 
 extension User {
     public static let applies = __(
-        ~registered,
-        ~emailChanged,
-        ~passwordChanged
+        ~userRegistered,
+        ~userChangedEmail,
+        ~userChangedPassword
     )
 }
