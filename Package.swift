@@ -1,10 +1,20 @@
+// swift-tools-version:4.0
 import PackageDescription
 
 let package = Package(
     name: "pakdatdomein",
     dependencies: [
-        .Package(url: "https://github.com/ankurp/Cent", majorVersion: 6),
-        .Package(url: "https://github.com/vapor/json.git", majorVersion: 1),
-        .Package(url: "https://github.com/Evertt/Timepiece.git", majorVersion: 1)
+        .package(url: "https://github.com/Evertt/Timepiece", from: "1.0.0"),
+    ],
+    targets: [
+        .target(name: "Framework"),
+        .target(
+            name: "Domain",
+            dependencies: ["Framework", "Timepiece"]
+        ),
+        .testTarget(
+            name: "DomainTests",
+            dependencies: ["Domain", "Framework"]
+        ),
     ]
 )

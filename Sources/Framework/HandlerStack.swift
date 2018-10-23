@@ -1,5 +1,3 @@
-import Cent
-
 struct HandlerStack {
     private typealias EventType = String
     private typealias Key = String
@@ -39,7 +37,7 @@ func +<K: Hashable, V>(left: [K:V]?, right: [K:V]?) -> [K:V] {
     guard var left = left else { return right ?? [:] }
     guard let right = right else { return left }
     
-    left.merge(dictionaries: right)
+    left.merge(right) { $1 }
     
     return left
 }

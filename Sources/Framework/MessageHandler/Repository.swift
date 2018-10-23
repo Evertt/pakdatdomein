@@ -1,5 +1,3 @@
-import Dollar
-
 public protocol Repository {
     func get(_ arType: AggregateRoot.Type, byID id: ID) -> AggregateRoot?
     func getEvents(from arType: AggregateRoot.Type, with id: ID) -> [Event]
@@ -24,7 +22,7 @@ public class ARepository: Repository {
     public func getEvents(from arType: AggregateRoot.Type, with id: ID) -> [Event] {
         let indices = self.indices[arType.type][id]?.sorted{ $0.key < $1.key }.map{$1}
         
-        return $.at(events, indexes: indices ?? [])
+        return (indices ?? []).map { events[$0] }
     }
     
     public func getEvents(startingAt index: Index = 0, max: Int = Int.max) -> [Event] {

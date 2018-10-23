@@ -6,7 +6,7 @@ public class CommandBus {
         var handlers = [String:CommandHandler]()
         
         for entity in aggregateRoots {
-            handlers.merge(dictionaries: entity.handles)
+            handlers.merge(entity.handles) { $1 }
         }
         
         self.repository = repository

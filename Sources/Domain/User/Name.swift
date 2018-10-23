@@ -3,7 +3,7 @@ extension User {
         let value: String
         
         init(_ value: String) throws {
-            guard case 1...50 = value.characters.count else {
+            guard case 1...50 = value.count else {
                 throw Error.invalidName(value)
             }
             

@@ -18,7 +18,7 @@ extension AggregateRoot {
     @discardableResult
     func handle(_ command: Command) throws -> Self {
         guard let commandHandler = Self.handles[command.type] else {
-            throw Error.noCommandHandlerFound(command: type(of: command))
+            throw Error.noCommandHandlerFound(command: Swift.type(of: command))
         }
         
         return try commandHandler.handle(command: command, for: self)
@@ -26,7 +26,7 @@ extension AggregateRoot {
     
     static func handle(_ command: Command) throws -> Self {
         guard let commandHandler = handles[command.type] else {
-            throw Error.noCommandHandlerFound(command: type(of: command))
+            throw Error.noCommandHandlerFound(command: Swift.type(of: command))
         }
         
         return try commandHandler.handle(command: command, for: nil)
@@ -42,7 +42,7 @@ extension AggregateRoot {
     
     func apply(_ event: Event, isNew: Bool) {
         guard let eventApplier = Self.applies[event.type] else {
-            fatalError("No event applier found for \(type(of: event))")
+            fatalError("No event applier found for \(Swift.type(of: event))")
         }
         
         if isNew { uncommittedEvents.append(event) }
@@ -51,7 +51,7 @@ extension AggregateRoot {
     
     static func apply(_ event: Event, isNew: Bool) -> Self {
         guard let eventApplier = applies[event.type] else {
-            fatalError("No event applier found for \(type(of: event))")
+            fatalError("No event applier found for \(Swift.type(of: event))")
         }
         
         let entity: Self = eventApplier.apply(event: event, on: nil)

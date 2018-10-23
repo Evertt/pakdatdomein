@@ -5,9 +5,6 @@ extension SaysType {
     static var type: String { return "\(Self.self)" }
 }
 
-
-
-
 public protocol Message: SaysType {
     var id: ID { get }
 }

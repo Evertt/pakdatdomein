@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Timepiece",
+        "repositoryURL": "https://github.com/Evertt/Timepiece",
+        "state": {
+          "branch": null,
+          "revision": "1d953ee9c196c0b8482db46d5cd8a15994445b3c",
+          "version": "1.0.3"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
