@@ -31,8 +31,12 @@ class DomainTests: XCTestCase {
             Domain.AddBid(id: domainID, bidID: bid2ID, userID: user2ID, amount: Money(amount: 5, currency: .eur))
         ]
         
-        for command in commands {
-            try commandBus.send(command)
+        do {
+            for command in commands {
+                try commandBus.send(command)
+            }
+        } catch {
+            print(error)
         }
         
         for event in repository.getEvents() {

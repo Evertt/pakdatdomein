@@ -1,5 +1,3 @@
-/*
- 
 // This is just a draft. Don't review this code please.
 
 class EventBus {
@@ -37,5 +35,3 @@ class EventBus {
         }
     }
 }
-
- */
