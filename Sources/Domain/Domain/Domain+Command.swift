@@ -104,7 +104,7 @@ extension Domain {
     func completePurchase(command: CompletePurchase) throws {
         try ensure(.purchaseIsPending)
 
-        let userID   = sale.purchase.userID
+        let userID   = sale.purchase!.userID
         let newOwner = Owner.user(userID: userID)
 
         apply(PurchaseCompleted(id: id, version: version))
@@ -134,18 +134,8 @@ extension Domain {
 
         apply(AuctionCompleted(id: id, version: version))
         
-        let bid: Auction.Bid? = auction.bids.reduce(nil) {
-            result, item in
-            
-            guard let amount = result?.amount else {
-                return item.value
-            }
-            
-            if item.value.amount > amount {
-                return item.value
-            }
-            
-            return result
+        let bid = auction.bids.values.max {
+            $0.amount < $1.amount
         }
 
         if let bid = bid {

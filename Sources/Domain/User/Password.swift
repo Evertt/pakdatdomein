@@ -11,7 +11,7 @@ extension User {
         }
         
         static func hash(_ str: String) -> String? {
-            return "poep"
+            return "TODO: use an actual hasher library..."
         }
     }
 }

@@ -1,20 +1,20 @@
 public struct ID: Hashable, CustomStringConvertible {
     static var seed = 0
-    public let hashValue   : Int
-    public let description : String
+    public let value: Int
+    public let description: String
     
     public init() {
         ID.seed += 1
         self.init(ID.seed)
     }
     
-    init(_ id: Int) {
-        hashValue   = id
-        description = "\(id)"
+    init(_ value: Int) {
+        self.value = value
+        self.description = "\(value)"
     }
     
     public static func ==(left: ID, right: ID) -> Bool {
-        return left.hashValue == right.hashValue
+        return left.value == right.value
     }
 }
 

@@ -17,7 +17,7 @@ public class CommandBus {
         let commandType = command.type
         
         guard let handler = commandHandlers[commandType] else {
-            fatalError()
+            throw Error.noCommandHandlerFound(command: type(of: command))
         }
         
         let aggregateRoot = repository.get(handler.arType, byID: command.id)

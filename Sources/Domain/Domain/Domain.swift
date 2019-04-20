@@ -26,7 +26,6 @@ public final class Domain: AggregateRoot {
     }
 }
 
-
 extension Domain: CustomDebugStringConvertible {
     public var debugDescription: String {
         let dict: [String:Any] = [
