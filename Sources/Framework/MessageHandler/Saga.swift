@@ -24,14 +24,6 @@ struct Handler {
     let id: ID?
     let once: Bool
     
-//    static func key<E>(type: E.Type, id: ID? = nil) -> String where E: Event {
-//        return String(describing: (type, id))
-//    }
-    
-    static func key(type: Event.Type, id: ID? = nil) -> String {
-        return String(describing: (type, id))
-    }
-    
     init<E>(_ handler: @escaping (E) throws -> (), to id: ID?, once: Bool = false) where E : Event {
         fire = {
             if let event = $0 as? E {
@@ -44,13 +36,31 @@ struct Handler {
     }
 }
 
-class EBus: Bus {
-    let commandBus: CommandBus
-    var handlers = [String:Handler]()
+extension Handler {
+    struct Key: Hashable {
+        let eventType: ObjectIdentifier
+        let id: ID?
+        
+        init(_ eventType: Event.Type, _ id: ID? = nil) {
+            self.eventType = ObjectIdentifier(eventType)
+            self.id = id
+        }
+        
+        init(_ event: Event, _ id: ID? = nil) {
+            self.init(type(of: event), id)
+        }
+    }
+}
 
-    init(commandBus: CommandBus, sagas: [Saga.Type]) {
+typealias Key = Handler.Key
+
+class SagaEventBus: Bus {
+    let commandBus: CommandBus
+    var handlers = [Key:Handler]()
+
+    init(commandBus: CommandBus, saga: Saga.Type) {
         self.commandBus = commandBus
-        sagas.forEach { $0.init(bus: self) }
+        saga.init(bus: self)
     }
     
     func send(_ command: Command) throws {
@@ -58,33 +68,34 @@ class EBus: Bus {
     }
     
     func subscribe<E>(_ handler: @escaping (E) throws -> (), to id: ID?) where E : Event {
-        handlers[Handler.key(type: E.self, id: id)] = Handler(handler, to: id)
+        handlers[Key(E.self, id)] = Handler(handler, to: id)
     }
     
     func subscribeOnce<E>(_ handler: @escaping (E) throws -> (), to id: ID?) where E : Event {
-        handlers[Handler.key(type: E.self, id: id)] = Handler(handler, to: id, once: true)
+        handlers[Key(E.self, id)] = Handler(handler, to: id, once: true)
     }
     
     func removeSubscription<E>(_ handler: (E) throws -> (), from id: ID?) where E : Event {
-        handlers.removeValue(forKey: Handler.key(type: E.self, id: id))
+        handlers.removeValue(forKey: Key(E.self, id))
     }
     
     func fireEvents(of aggregateRoot: AggregateRoot) throws {
         for event in aggregateRoot.uncommittedEvents {
-            let generalKey  = Handler.key(type: type(of: event), id: nil)
-            let specificKey = Handler.key(type: type(of: event), id: aggregateRoot.id)
-            
-            try fire(event, for: generalKey)
-            try fire(event, for: specificKey)
+            try fire(event, id: nil)
+            try fire(event, id: aggregateRoot.id)
         }
     }
     
-    func fire(_ event: Event, for key: String) throws {
-        let handler = handlers[key]
+    func fire(_ event: Event, id: ID?) throws {
+        let key = Key(event, id)
         
-        try handler?.fire(event)
+        guard let handler = handlers[key] else {
+            return
+        }
         
-        if handler?.once == true {
+        try handler.fire(event)
+        
+        if handler.once {
             handlers.removeValue(forKey: key)
         }
     }

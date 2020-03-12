@@ -8,6 +8,8 @@ public protocol AggregateRoot: Entity {
     
     static var applies: [String:EventApplier]   { get }
     static var handles: [String:CommandHandler] { get }
+    
+    static var sagas: [Saga.Type] { get }
 }
 
 extension AggregateRoot {

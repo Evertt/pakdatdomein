@@ -16,4 +16,6 @@ public final class User: AggregateRoot {
         self.email    = email
         self.password = password
     }
+    
+    public static let sagas: [Saga.Type] = []
 }

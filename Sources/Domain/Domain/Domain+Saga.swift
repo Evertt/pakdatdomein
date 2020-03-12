@@ -3,7 +3,7 @@ extension Double {
         return Money(amount: Decimal(self), currency: .eur)
     }
     
-    var usd: Money {
+    var dollar: Money {
         return Money(amount: Decimal(self), currency: .usd)
     }
 }
@@ -42,4 +42,10 @@ class FoundDomainSaga: Saga {
     func domainLost(event: Domain.DomainLost) throws {
         try bus.send(Domain.CancelPurchase(id: event.id))
     }
+}
+
+extension Domain {
+    public static let sagas: [Saga.Type] = [
+        FoundDomainSaga.self,
+    ]
 }

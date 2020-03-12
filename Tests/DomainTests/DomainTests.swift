@@ -26,14 +26,17 @@ class DomainTests: XCTestCase {
             User.Register(id: user2ID, name: "Jane Doe", email: "jane.doe@example.com", password: "secret"),
             
             Domain.CreateFoundDomain(id: domainID, url: url),
-            Domain.OpenAuction(id: domainID),
-            Domain.AddBid(id: domainID, bidID: bid1ID, userID: user1ID, amount: Money(amount: 2, currency: .eur)),
-            Domain.AddBid(id: domainID, bidID: bid2ID, userID: user2ID, amount: Money(amount: 5, currency: .eur)),
-            Domain.CancelBid(id: domainID, bidID: bid2ID),
-            Domain.CompleteAuction(id: domainID),
-            Domain.PutOnSale(id: domainID, price: Money(amount: 150, currency: .eur)),
             Domain.RequestPurchase(id: domainID, userID: user1ID),
-            Domain.CancelSale(id: domainID),
+            Domain.GrabDomain(id: domainID),
+            
+//            Domain.OpenAuction(id: domainID),
+//            Domain.AddBid(id: domainID, bidID: bid1ID, userID: user1ID, amount: Money(amount: 2, currency: .eur)),
+//            Domain.AddBid(id: domainID, bidID: bid2ID, userID: user2ID, amount: Money(amount: 5, currency: .eur)),
+//            Domain.CancelBid(id: domainID, bidID: bid2ID),
+//            Domain.CompleteAuction(id: domainID),
+//            Domain.PutOnSale(id: domainID, price: Money(amount: 150, currency: .eur)),
+//            Domain.RequestPurchase(id: domainID, userID: user1ID),
+//            Domain.CancelSale(id: domainID),
         ]
         
         do {

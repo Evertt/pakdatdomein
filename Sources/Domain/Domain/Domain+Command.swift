@@ -55,6 +55,7 @@ extension Domain {
         }
     }
 
+    public struct GrabDomain       : Command { public let id: ID; public init(id: ID) { self.id = id } }
     public struct CancelSale       : Command { public let id: ID; public init(id: ID) { self.id = id } }
     public struct CancelPurchase   : Command { public let id: ID; public init(id: ID) { self.id = id } }
     public struct CompletePurchase : Command { public let id: ID; public init(id: ID) { self.id = id } }
@@ -67,11 +68,15 @@ extension Domain {
     static func createFoundDomain(command: CreateFoundDomain) -> Domain {
         return apply(DomainFound(id: command.id, version: 1, url: command.url))
     }
+    
+    func grabDomain(command: GrabDomain) {
+        apply(DomainGrabbed(id: id, version: version))
+    }
 
     func putOnSale(command: PutOnSale) throws {
-        try ensure(.isOwnedByInsider, .noBusinessIsActive)
+        try ensure(.noBusinessIsActive)
         
-        apply(SaleOpened(id: id, version: version, owner: owner!, price: command.price))
+        apply(SaleOpened(id: id, version: version, owner: owner, price: command.price))
     }
 
     func requestPurchase(command: RequestPurchase) throws {
@@ -174,6 +179,7 @@ extension Domain {
 extension Domain {
     public static let handles = __(
         ~createFoundDomain,
+        ~grabDomain,
 
         ~putOnSale,
         ~cancelSale,

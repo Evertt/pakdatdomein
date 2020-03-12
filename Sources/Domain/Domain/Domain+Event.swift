@@ -13,7 +13,7 @@ extension Domain {
     public struct BidAdded           : Event { public let id: ID, version: Int, bidID: ID, userID: ID, amount: Money }
     public struct BidCanceled        : Event { public let id: ID, version: Int, bidID: ID }
     
-    public struct SaleOpened         : Event { public let id: ID, version: Int, owner: Owner, price: Money }
+    public struct SaleOpened         : Event { public let id: ID, version: Int, owner: Owner?, price: Money }
     public struct SaleCanceled       : Event { public let id: ID, version: Int }
 
     public struct PurchaseRequested  : Event { public let id: ID, version: Int, userID: ID }
@@ -83,7 +83,7 @@ extension Domain {
     }
 
     func saleOpened(event: SaleOpened) {
-        sale = Sale(owner: event.owner, price: event.price)
+        sale = Sale(owner: event.owner ?? .us, price: event.price)
     }
 
     func saleCanceled(_: SaleCanceled) {
