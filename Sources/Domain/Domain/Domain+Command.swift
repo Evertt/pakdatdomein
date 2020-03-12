@@ -69,18 +69,13 @@ extension Domain {
     }
 
     func putOnSale(command: PutOnSale) throws {
-        guard let owner = owner else {
-            throw Error.ownedByOutsider
-        }
+        try ensure(.isOwnedByInsider, .noBusinessIsActive)
         
-        try ensure(.noBusinessIsActive)
-        
-        apply(SaleOpened(id: id, version: version, owner: owner, price: command.price))
+        apply(SaleOpened(id: id, version: version, owner: owner!, price: command.price))
     }
 
     func requestPurchase(command: RequestPurchase) throws {
-        try ensure(.saleIsRunning)
-        try ensure(.noPendingPurchase)
+        try ensure(.saleIsRunning, .noPendingPurchase)
         
         apply(PurchaseRequested(id: id, version: version, userID: command.userID))
     }
@@ -131,15 +126,15 @@ extension Domain {
 
     func completeAuction(command: CompleteAuction) throws {
         try ensure(.auctionIsRunning)
+        
+        let winningBid = auction.bids.values
+            .filter { !$0.canceled }
+            .max { $0.amount < $1.amount }
 
         apply(AuctionCompleted(id: id, version: version))
-        
-        let bid = auction.bids.values.max {
-            $0.amount < $1.amount
-        }
 
-        if let bid = bid {
-            let newOwner = Owner.user(userID: bid.userID)
+        if let winningBid = winningBid {
+            let newOwner = Owner.user(userID: winningBid.userID)
 
             apply(DomainChangedOwner(id: id, version: version, newOwner: newOwner))
         }

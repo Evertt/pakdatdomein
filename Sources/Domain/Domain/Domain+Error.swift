@@ -1,49 +1,81 @@
 extension Domain {
-    enum Error: Swift.Error {
-        case businessIsActive
-        case noSaleIsRunning
-        case noAuctionIsRunning
-        case noBidIsActive(ID)
-        case purchaseIsPending
-        case noPendingPurchase
-        case ownedByOutsider
+    struct FailedAssertions: Error {
+        let assertions: [Assertion]
+        
+        init(_ assertions: Assertion...) {
+            self.assertions = assertions
+        }
+        
+        init(_ assertions: [Assertion] = []) {
+            self.assertions = assertions
+        }
+        
+        static func +(lhs: FailedAssertions, rhs: FailedAssertions) -> FailedAssertions {
+            return FailedAssertions(lhs.assertions + rhs.assertions)
+        }
     }
     
-    enum Check {
+    enum Assertion {
         case noBusinessIsActive
         case saleIsRunning
         case auctionIsRunning
         case bidIsActive(ID)
         case noPendingPurchase
         case purchaseIsPending
+        case isOwnedByInsider
+        
+        fileprivate var failed: Result<Void, FailedAssertions> {
+            return .failure(FailedAssertions(self))
+        }
     }
 
-    func ensure(_ check: Check) throws {
-        switch check {
+    func check(_ assertion: Assertion) -> Result<Void, FailedAssertions> {
+        switch assertion {
 
-        case .noBusinessIsActive where business != nil:
-            throw Error.businessIsActive
+        case .noBusinessIsActive where business != nil,
+             
+             .auctionIsRunning where business?.auction == nil,
+             
+             .saleIsRunning where business?.sale == nil,
+             
+             .noPendingPurchase where business?.sale?.purchase != nil,
+             
+             .purchaseIsPending where business?.sale?.purchase == nil,
+             
+             .isOwnedByInsider where owner == nil:
             
-        case .auctionIsRunning where business?.auction == nil:
-            throw Error.noAuctionIsRunning
-            
-        case .saleIsRunning where business?.sale == nil:
-            throw Error.noSaleIsRunning
-            
+            return assertion.failed
+                
         case .bidIsActive(let bidID) where business?.auction?.bids[bidID]?.canceled != false:
-            throw Error.noBidIsActive(bidID)
+            return assertion.failed
             
-        case .noPendingPurchase where business?.sale?.purchase != nil:
-            throw Error.purchaseIsPending
-            
-        case .purchaseIsPending where business?.sale?.purchase == nil:
-            throw Error.noPendingPurchase
-            
-        default: break
+        default: return .success(())
         }
     }
     
-    func check(_ check: Check) -> Bool {
-        return (try? ensure(check)) != nil
+    func check(_ assertion: Assertion) -> Bool {
+        return (try? ensure(assertion)) != nil
+    }
+    
+    func ensure(_ assertions: Assertion...) throws {
+        let failed = assertions
+            .compactMap { assertion in
+                check(assertion).getFailure()
+            }
+            .reduce(FailedAssertions(), +)
+        
+        if !failed.assertions.isEmpty {
+            throw failed
+        }
+    }
+}
+
+extension Result {
+    func getFailure() -> Failure? {
+        if case .failure(let failure) = self {
+            return failure
+        }
+        
+        return nil
     }
 }

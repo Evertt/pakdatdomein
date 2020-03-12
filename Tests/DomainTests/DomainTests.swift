@@ -28,7 +28,12 @@ class DomainTests: XCTestCase {
             Domain.CreateFoundDomain(id: domainID, url: url),
             Domain.OpenAuction(id: domainID),
             Domain.AddBid(id: domainID, bidID: bid1ID, userID: user1ID, amount: Money(amount: 2, currency: .eur)),
-            Domain.AddBid(id: domainID, bidID: bid2ID, userID: user2ID, amount: Money(amount: 5, currency: .eur))
+            Domain.AddBid(id: domainID, bidID: bid2ID, userID: user2ID, amount: Money(amount: 5, currency: .eur)),
+            Domain.CancelBid(id: domainID, bidID: bid2ID),
+            Domain.CompleteAuction(id: domainID),
+            Domain.PutOnSale(id: domainID, price: Money(amount: 150, currency: .eur)),
+            Domain.RequestPurchase(id: domainID, userID: user1ID),
+            Domain.CancelSale(id: domainID),
         ]
         
         do {
@@ -36,11 +41,11 @@ class DomainTests: XCTestCase {
                 try commandBus.send(command)
             }
         } catch {
-            print(error)
+            print("🔴", error)
         }
         
         for event in repository.getEvents() {
-            print("🔴", event)
+            print("🟢", event)
         }
     }
 }
