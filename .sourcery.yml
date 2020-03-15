@@ -1,0 +1,5 @@
+sources:
+    - Sources/Domain
+templates:
+    - Templates
+output: Sources/Domain/Generated

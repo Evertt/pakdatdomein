@@ -1,3 +1,4 @@
+// sourcery: commands
 extension Domain {
     public struct CreateFoundDomain: Command {
         public let id: ID, url: URL
@@ -80,7 +81,7 @@ extension Domain {
     }
 
     func requestPurchase(command: RequestPurchase) throws {
-        try ensure(.saleIsRunning, .noPendingPurchase)
+        try ensure(.saleIsRunning, .noPendingPurchase, .buyerIsNotOwner(command.userID))
         
         apply(PurchaseRequested(id: id, version: version, userID: command.userID))
     }
@@ -152,7 +153,7 @@ extension Domain {
     }
 
     func addBid(command: AddBid) throws {
-        try ensure(.auctionIsRunning)
+        try ensure(.auctionIsRunning, .bidderIsNotOwner(command.userID))
         
         apply(BidAdded(
             id      : id,

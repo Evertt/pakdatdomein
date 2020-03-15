@@ -1,0 +1,11 @@
+<% for type in types.extensions { -%>
+    <% guard let _ = type.annotations["commands"] else { continue } -%>
+    <% for method in type.methods { -%>
+        <%= method.callName %>
+
+        <% for parameter in method.parameters { -%>
+            <%= parameter.name %>
+            <%= parameter.type %>
+        <% } -%>
+    <% } -%>
+<% } -%>
