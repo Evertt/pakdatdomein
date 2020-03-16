@@ -1,34 +1,21 @@
+// sourcery:begin: events
 extension User {
-    public struct UserRegistered      : Event { public let id: ID, version: Int, name: Name, email: Email, password: Password }
-    public struct UserChangedEmail    : Event { public let id: ID, version: Int, newEmail: Email }
-    public struct UserChangedPassword : Event { public let id: ID, version: Int, newPassword: Password }
-}
-
-extension User {
-    static func userRegistered(event: UserRegistered) -> User {
+    static func userRegistered(id: ID, version: Int, name: Name, email: Email, password: Password) -> User {
         return User(
-            id       : event.id,
-            version  : event.version,
+            id       : id,
+            version  : version,
 
-            name     : event.name,
-            email    : event.email,
-            password : event.password
+            name     : name,
+            email    : email,
+            password : password
         )
     }
     
-    func userChangedEmail(event: UserChangedEmail) {
-        email = event.newEmail
+    func userChangedEmail(newEmail: Email) {
+        email = newEmail
     }
 
-    func userChangedPassword(event: UserChangedPassword) {
-        password = event.newPassword
+    func userChangedPassword(newPassword: Password) {
+        password = newPassword
     }
-}
-
-extension User {
-    public static let applies = __(
-        ~userRegistered,
-        ~userChangedEmail,
-        ~userChangedPassword
-    )
 }

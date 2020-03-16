@@ -1,5 +1,5 @@
 extension User {
-    public struct Password {
+    public struct Password: Codable {
         let hash: String
         
         init(_ value: String) throws {

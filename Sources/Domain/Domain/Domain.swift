@@ -4,7 +4,7 @@ public final class Domain: AggregateRoot {
     var owner    : Owner?
     var business : Business?
 
-    public var version: Int
+    public var version: Int = 0
     public var uncommittedEvents = [Event]()
 
     var sale: Sale! {

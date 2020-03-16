@@ -1,6 +1,6 @@
 extension Domain {
-    enum Business {
-        case auction(Auction), sale(Sale)
+    enum Business: AutoCodable {
+        case auction(Domain.Auction), sale(Domain.Sale)
         
         var auction: Auction? {
             get {

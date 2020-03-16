@@ -1,5 +1,5 @@
 extension Domain {
-    struct Auction {
+    struct Auction: Codable {
         let owner  : Owner
         let start  : Date
         var end    : Date

@@ -5,7 +5,7 @@ extension SaysType {
     static var type: String { return "\(Self.self)" }
 }
 
-public protocol Message: SaysType {
+public protocol Message: SaysType, Codable {
     var id: ID { get }
 }
 

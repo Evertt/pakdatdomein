@@ -1,5 +1,8 @@
-sources:
-    - Sources/Domain
+project:
+  file: ./pakdatdomein.xcodeproj
+  target:
+    - name: Domain
+    - name: Framework
 templates:
-    - Templates
-output: Sources/Domain/Generated
+  - Templates
+output: ./Sources/Domain/Generated/

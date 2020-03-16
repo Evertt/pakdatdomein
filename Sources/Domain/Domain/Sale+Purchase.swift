@@ -1,5 +1,5 @@
 extension Domain {
-    struct Sale {
+    struct Sale: Codable {
         let owner    : Owner
         let price    : Money
         var purchase : Purchase?
@@ -12,7 +12,7 @@ extension Domain {
 }
 
 extension Domain.Sale {
-    struct Purchase {
+    struct Purchase: Codable {
         let userID : ID
         let price  : Money
         

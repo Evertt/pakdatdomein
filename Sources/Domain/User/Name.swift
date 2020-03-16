@@ -1,5 +1,5 @@
 extension User {
-    public struct Name {
+    public struct Name: Codable {
         let value: String
         
         init(_ value: String) throws {

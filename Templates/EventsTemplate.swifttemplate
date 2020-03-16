@@ -1,0 +1,7 @@
+<% for type in types.implementing["Event"] where type.parent?.inheritedTypes.contains("AggregateRoot") == true { _%>
+// sourcery:inline:<%= type.name %>.Events
+<%= type.name %>
+public let id: ID
+public let version: Int
+// sourcery:end
+<%_ } _%>

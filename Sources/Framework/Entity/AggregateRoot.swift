@@ -1,4 +1,4 @@
-public protocol Entity: class, SaysType {
+public protocol Entity: class, SaysType, Codable {
     var id: ID { get }
 }
 

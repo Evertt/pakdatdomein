@@ -7,3 +7,27 @@ extension Domain {
         }
     }
 }
+
+extension Domain.Owner: Codable {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        
+        if container.decodeNil() {
+            self = .us
+        } else {
+            let userID = try container.decode(Int.self)
+            self = .user(userID: ID(userID))
+        }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        
+        switch self {
+        case .us:
+            return try container.encodeNil()
+        case let .user(userID):
+            return try container.encode(userID.value)
+        }
+    }
+}
