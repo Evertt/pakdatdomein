@@ -1,39 +1,43 @@
 // sourcery:begin: commands
 extension Domain {
     public static func createFoundDomain(id: ID, url: URL) -> Domain {
-        return apply(DomainFound(id: id, version: 1, url: url))
+        return apply(domainFound(id: id, url: url))
     }
     
     public func grabDomain() {
-        apply(DomainGrabbed(id: id, version: version))
+        apply(domainGrabbed())
     }
 
     public func putOnSale(price: Money) throws {
         try ensure(.noBusinessIsActive)
         
-        apply(SaleOpened(id: id, version: version, owner: owner, price: price))
+        apply(saleOpened(owner: owner ?? .us, price: price))
     }
 
     public func requestPurchase(userID: ID) throws {
-        try ensure(.saleIsRunning, .noPendingPurchase, .buyerIsNotOwner(userID))
+        try ensure(
+            .saleIsRunning,
+            .noPendingPurchase,
+            .buyerIsNotOwner(userID)
+        )
         
-        apply(PurchaseRequested(id: id, version: version, userID: userID))
+        apply(purchaseRequested(userID: userID))
     }
 
     public func cancelPurchase() throws {
         try ensure(.purchaseIsPending)
         
-        apply(PurchaseCanceled(id: id, version: version))
+        apply(purchaseCanceled())
     }
 
     public func cancelSale() throws {
         try ensure(.saleIsRunning)
         
         if check(.purchaseIsPending) {
-            apply(PurchaseCanceled(id: id, version: version))
+            apply(purchaseCanceled())
         }
         
-        apply(SaleCanceled(id: id, version: version))
+        apply(saleCanceled())
     }
 
     public func completePurchase() throws {
@@ -42,16 +46,14 @@ extension Domain {
         let userID   = sale.purchase!.userID
         let newOwner = Owner.user(userID: userID)
 
-        apply(PurchaseCompleted(id: id, version: version))
-        apply(DomainChangedOwner(id: id, version: version, newOwner: newOwner))
+        apply(purchaseCompleted())
+        apply(domainChangedOwner(newOwner: newOwner))
     }
 
     public func openAuction() throws {
         try ensure(.noBusinessIsActive)
         
-        apply(AuctionOpened(
-            id      : id,
-            version : version,
+        apply(auctionOpened(
             owner   : owner ?? .us,
             start   : .now,
             end     : .now + Default.durationOfAuction
@@ -61,7 +63,7 @@ extension Domain {
     public func cancelAuction() throws {
         try ensure(.auctionIsRunning)
         
-        apply(AuctionCanceled(id: id, version: version))
+        apply(auctionCanceled())
     }
 
     public func completeAuction() throws {
@@ -71,42 +73,34 @@ extension Domain {
             .filter { !$0.canceled }
             .max { $0.amount < $1.amount }
 
-        apply(AuctionCompleted(id: id, version: version))
+        apply(auctionCompleted())
 
         if let winningBid = winningBid {
             let newOwner = Owner.user(userID: winningBid.userID)
 
-            apply(DomainChangedOwner(id: id, version: version, newOwner: newOwner))
+            apply(domainChangedOwner(newOwner: newOwner))
         }
     }
 
     public func extendAuction(newEndDate: Date) throws {
         try ensure(.auctionIsRunning)
         
-        apply(AuctionExtended(id: id, version: version, newEndDate: newEndDate))
+        apply(auctionExtended(newEndDate: newEndDate))
     }
 
     public func addBid(bidID: ID, userID: ID, amount: Money) throws {
         try ensure(.auctionIsRunning, .bidderIsNotOwner(userID))
         
-        apply(BidAdded(
-            id      : id,
-            version : version, 
-            bidID   : bidID,
-            userID  : userID,
-            amount  : amount
-        ))
+        apply(bidAdded(bidID: bidID, userID: userID, amount: amount))
         
         if auction.end < .now + 1.hour {
-            let newDate: Date = .now + 1.hour
-            
-            apply(AuctionExtended(id: id, version: version, newEndDate: newDate))
+            apply(auctionExtended(newEndDate: .now + 1.hour))
         }
     }
 
     public func cancelBid(bidID: ID) throws {
         try ensure(.bidIsActive(bidID))
         
-        apply(BidCanceled(id: id, version: version, bidID: bidID))
+        apply(bidCanceled(bidID: bidID))
     }
 }

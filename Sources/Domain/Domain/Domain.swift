@@ -17,7 +17,7 @@ public final class Domain: AggregateRoot {
         set { business = .auction(newValue) }
     }
     
-    init(id: ID, version: Int, url: URL, owner: Owner?) {
+    init(id: ID, version: Int = 1, url: URL, owner: Owner?) {
         self.id      = id
         self.version = version
 

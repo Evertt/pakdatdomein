@@ -1,9 +1,9 @@
 // sourcery:begin: events
 extension User {
-    static func userRegistered(id: ID, version: Int, name: Name, email: Email, password: Password) -> User {
+    static func userRegistered(id: ID, name: Name, email: Email, password: Password) -> User {
         return User(
             id       : id,
-            version  : version,
+            version  : 1,
 
             name     : name,
             email    : email,

@@ -1,7 +1,7 @@
 extension Domain {
     /// These are all the things that can go wrong in this app
     
-    enum Assertion: Equatable {
+    enum Assertion: Equatable, Error {
         case noBusinessIsActive
         case saleIsRunning
         case auctionIsRunning
@@ -13,7 +13,7 @@ extension Domain {
         case buyerIsNotOwner(_ buyerID: ID)
         
         fileprivate var failed: AssertionResult {
-            return .failure(FailedAssertions([self]))
+            return .failure([self])
         }
         
         fileprivate var succeeded: AssertionResult {
@@ -26,12 +26,12 @@ extension Domain {
     /// If assertions go wrong, we store those failed assertions in this type.
     /// We do this so we can check multiple assertions at a time
     /// and throw one error with all the failed assertions.
-    
-    typealias FailedAssertions = Array<Assertion>
+    typealias FailedAssertion = Domain.Assertion
+    typealias FailedAssertions = [FailedAssertion]
     typealias AssertionResult = Result<Void, FailedAssertions>
 }
 
-extension Array: Error where Element == Domain.Assertion {}
+extension Array: Error where Element: Error {}
 
 extension Domain {
     func check(_ assertion: Assertion) -> AssertionResult {
@@ -79,7 +79,7 @@ extension Domain {
             }
         
         if !failedAssertions.isEmpty {
-            // throw failedAssertions
+            throw failedAssertions
         }
     }
 }

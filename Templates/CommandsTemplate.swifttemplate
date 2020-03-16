@@ -20,8 +20,23 @@ func inits(_ parameters: [MethodParameter], indent: Int) -> String {
         .joined(separator: "\n" + String(repeating: " ", count: indent))
 }
 
+func eventParams(_ parameters: [MethodParameter], isStatic: Bool) -> String {
+    return parameters
+        .filter { isStatic || $0.name != "id" && $0.name != "version" }
+        .map { "\($0.name): \($0.typeName)" }
+        .joined(separator: ", ")
+}
+
+func eventArgs(_ parameters: [MethodParameter], isStatic: Bool) -> String {
+    var params = parameters.map { "\($0.name): \($0.name)" }
+    if !isStatic {
+        params.insert("id: id, version: version", at: 0)
+    }
+    return params.joined(separator: ", ")
+}
+
 extension String {
-    var capitalizedFL: String {
+    var ucFirst: String {
         return prefix(1).capitalized + dropFirst()
     }
 }
@@ -39,19 +54,24 @@ extension SourceryMethod {
 for type in types.implementing["AggregateRoot"] { _%>
 extension <%= type.name %> {
     <%_ for method in type.methods where method.isCommand || method.isEvent { _%>
-    public struct <%= method.callName.capitalizedFL %>: <%= method.isCommand ? "Command" : "Event" %> {
+    public struct <%= method.callName.ucFirst %>: <%= method.isCommand ? "Command" : "Event" %> {
         public let id: ID<%= method.isEvent ? "\n        public let version: Int" : "" %>
         <%= props(method.parameters, indent: 8) %>
 
-        public init(id: ID<%= method.isEvent ? ", version: Int" : "" %><%= nit(method.parameters) %>) {
+        public init(id: ID<%= method.isEvent ? ", version: Int = 1" : "" %><%= nit(method.parameters) %>) {
             self.id = id<%= method.isEvent ? "\n            self.version = version" : "" %>
             <%= inits(method.parameters, indent: 12) %>
         }
     }
 
-    <%= method.accessLevel %><%= method.isStatic ? " static" : "" %> func <%= method.callName %>(<%= method.isCommand ? "command" : "event" %>: <%= method.callName.capitalizedFL %>) <%= method.throws ? "throws " : "" %><%= method.returnType != nil ? "-> \(method.returnTypeName) " : "" %>{
-        <%= method.returnType != nil ? "return " : "" %><%= method.throws ? "try " : "" %><%= method.callName %>(<%= method.parameters.map({"\($0.name): " + (method.isCommand ? "command" : "event") + ".\($0.name)"}).joined(separator: ", ") %>)
+    <%= method.accessLevel %><%= method.isStatic ? " static" : "" %> func <%= method.callName %>(<%= method.isCommand ? "command" : "event" %>: <%= method.callName.ucFirst %>) <%= method.throws ? "throws " : "" %><%= method.returnType != nil ? "-> \(method.returnTypeName) " : "" %>{
+        <%= method.returnType != nil || method.isEvent ? "return " : "" %><%= method.throws ? "try " : "" %><%= method.callName %>(<%= method.parameters.map({"\($0.name): " + (method.isCommand ? "command" : "event") + ".\($0.name)"}).joined(separator: ", ") %>)
     }
+    <% if method.isEvent { %>
+    <%= method.accessLevel %><%= method.isStatic ? " static" : "" %> func <%= method.callName %>(<%= eventParams(method.parameters, isStatic: method.isStatic) %>) <%= method.throws ? "throws " : "" %> -> <%= method.callName.ucFirst %> {
+        return <%= method.callName.ucFirst %>(<%= eventArgs(method.parameters, isStatic: method.isStatic) %>)
+    }
+    <% } %>
     <%_ } _%><%_ if type.methods.filter({$0.isCommand}).count > 0 { _%>
     public static let handles = __(
         <%= type.methods.filter({$0.isCommand}).map({"~\($0.callName)"}).joined(separator: ",\n        ") %>
