@@ -75,8 +75,8 @@ extension Domain {
             .domainIsOwnedByUsOrOurUser
         )
         
-        let winningBid = auction.bids.values
-            .reject(\.canceled).max(\.amount)
+        let winningBid = auction.bids
+            .except(\.canceled).max(\.amount)
 
         apply(auctionCompleted())
 
@@ -98,8 +98,8 @@ extension Domain {
         
         apply(bidAdded(bidID: bidID, userID: userID, amount: amount))
         
-        if auction.end < .now + 1.hour {
-            apply(auctionExtended(newEndDate: .now + 1.hour))
+        if auction.end < 1.hour.fromNow {
+            apply(auctionExtended(newEndDate: 1.hour.fromNow))
         }
     }
 
