@@ -20,8 +20,8 @@ extension Domain {
         owner = newOwner
     }
 
-    func auctionOpened(owner: Owner, start: Date, end: Date) {
-        auction = Auction(owner: owner, start: start, end: end)
+    func auctionOpened(seller: Owner, start: Date, end: Date) {
+        auction = Auction(seller: seller, start: start, end: end)
     }
 
     func auctionCanceled() {
@@ -48,8 +48,8 @@ extension Domain {
         auction.bids[bidID]!.canceled = true
     }
 
-    func saleOpened(owner: Owner, price: Money) {
-        sale = Sale(owner: owner, price: price)
+    func saleOpened(seller: Owner, price: Money) {
+        sale = Sale(seller: seller, price: price)
     }
 
     func saleCanceled() {

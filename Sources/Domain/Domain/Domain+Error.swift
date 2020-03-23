@@ -2,36 +2,20 @@ extension Domain {
     /// These are all the things that can go wrong in this app
     
     enum Assertion: Equatable, Error {
-        case noBusinessIsActive
         case saleIsRunning
         case auctionIsRunning
+        case noBusinessIsActive
         case bidIsActive(_ bidID: ID)
-        case noPendingPurchase
+        
         case purchaseIsPending
-        case isOwnedByInsider
-        case bidderIsNotOwner(_ bidderID: ID)
-        case buyerIsNotOwner(_ buyerID: ID)
+        case noPurchaseIsPending
         
-        fileprivate var failed: AssertionResult {
-            return .failure([self])
-        }
+        case buyerIsNotSeller(_ buyerID: ID)
+        case bidderIsNotSeller(_ bidderID: ID)
         
-        fileprivate var succeeded: AssertionResult {
-            return .success(())
-        }
+        case domainIsOwnedByUsOrOurUser
     }
 }
-
-extension Domain {
-    /// If assertions go wrong, we store those failed assertions in this type.
-    /// We do this so we can check multiple assertions at a time
-    /// and throw one error with all the failed assertions.
-    typealias FailedAssertion = Domain.Assertion
-    typealias FailedAssertions = [FailedAssertion]
-    typealias AssertionResult = Result<Void, FailedAssertions>
-}
-
-extension Array: Error where Element: Error {}
 
 extension Domain {
     func check(_ assertion: Assertion) -> AssertionResult {
@@ -39,28 +23,27 @@ extension Domain {
 
         case .noBusinessIsActive where business != nil,
              
+             .saleIsRunning where business?.sale == nil,
              .auctionIsRunning where business?.auction == nil,
              
-             .saleIsRunning where business?.sale == nil,
-             
-             .noPendingPurchase where business?.sale?.purchase != nil,
-             
              .purchaseIsPending where business?.sale?.purchase == nil,
+             .noPurchaseIsPending where business?.sale?.purchase != nil,
              
-             .isOwnedByInsider where owner == nil:
+             .domainIsOwnedByUsOrOurUser where owner == nil:
             
             return assertion.failed
                 
         case let .bidIsActive(bidID) where business?.auction?.bids[bidID]?.canceled != false:
             return assertion.failed
             
-        case let .bidderIsNotOwner(bidder) where bidder == auction.owner:
+        case let .bidderIsNotSeller(bidder) where bidder == auction.seller:
             return assertion.failed
             
-        case let .buyerIsNotOwner(buyer) where buyer == sale.owner:
+        case let .buyerIsNotSeller(buyer) where buyer == sale.seller:
             return assertion.failed
             
-        default: return assertion.succeeded
+        default:
+            return assertion.succeeded
         }
     }
     
@@ -84,12 +67,18 @@ extension Domain {
     }
 }
 
-extension Result {
-    func getFailure() -> Failure? {
-        if case .failure(let failure) = self {
-            return failure
-        }
-        
-        return nil
+extension Domain {
+    typealias FailedAssertion = Domain.Assertion
+    typealias FailedAssertions = [FailedAssertion]
+    typealias AssertionResult = Result<Void, FailedAssertions>
+}
+
+extension Domain.Assertion {
+    fileprivate var failed: Domain.AssertionResult {
+        return .failure([self])
+    }
+    
+    fileprivate var succeeded: Domain.AssertionResult {
+        return .success(())
     }
 }

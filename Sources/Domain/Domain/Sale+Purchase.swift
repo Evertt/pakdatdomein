@@ -1,12 +1,12 @@
 extension Domain {
     struct Sale: Codable {
-        let owner    : Owner
+        let seller   : Owner
         let price    : Money
         var purchase : Purchase?
         
-        init(owner: Owner, price: Money) {
-            self.owner    = owner
-            self.price    = price
+        init(seller: Owner, price: Money) {
+            self.seller = seller
+            self.price  = price
         }
     }
 }

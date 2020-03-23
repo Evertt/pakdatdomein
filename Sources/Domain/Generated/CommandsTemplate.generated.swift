@@ -313,25 +313,25 @@ extension Domain {
     public struct AuctionOpened: Event {
         public let id: ID
         public let version: Int
-        public let owner: Owner
+        public let seller: Owner
         public let start: Date
         public let end: Date
 
-        public init(id: ID, version: Int = 1, owner: Owner, start: Date, end: Date) {
+        public init(id: ID, version: Int = 1, seller: Owner, start: Date, end: Date) {
             self.id = id
             self.version = version
-            self.owner = owner
+            self.seller = seller
             self.start = start
             self.end = end
         }
     }
 
     internal func auctionOpened(event: AuctionOpened) {
-        return auctionOpened(owner: event.owner, start: event.start, end: event.end)
+        return auctionOpened(seller: event.seller, start: event.start, end: event.end)
     }
     
-    internal func auctionOpened(owner: Owner, start: Date, end: Date)  -> AuctionOpened {
-        return AuctionOpened(id: id, version: version, owner: owner, start: start, end: end)
+    internal func auctionOpened(seller: Owner, start: Date, end: Date)  -> AuctionOpened {
+        return AuctionOpened(id: id, version: version, seller: seller, start: start, end: end)
     }
     
 
@@ -447,23 +447,23 @@ extension Domain {
     public struct SaleOpened: Event {
         public let id: ID
         public let version: Int
-        public let owner: Owner
+        public let seller: Owner
         public let price: Money
 
-        public init(id: ID, version: Int = 1, owner: Owner, price: Money) {
+        public init(id: ID, version: Int = 1, seller: Owner, price: Money) {
             self.id = id
             self.version = version
-            self.owner = owner
+            self.seller = seller
             self.price = price
         }
     }
 
     internal func saleOpened(event: SaleOpened) {
-        return saleOpened(owner: event.owner, price: event.price)
+        return saleOpened(seller: event.seller, price: event.price)
     }
     
-    internal func saleOpened(owner: Owner, price: Money)  -> SaleOpened {
-        return SaleOpened(id: id, version: version, owner: owner, price: price)
+    internal func saleOpened(seller: Owner, price: Money)  -> SaleOpened {
+        return SaleOpened(id: id, version: version, seller: seller, price: price)
     }
     
 

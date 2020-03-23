@@ -11,14 +11,14 @@ extension Domain {
     public func putOnSale(price: Money) throws {
         try ensure(.noBusinessIsActive)
         
-        apply(saleOpened(owner: owner ?? .us, price: price))
+        apply(saleOpened(seller: owner ?? .us, price: price))
     }
 
     public func requestPurchase(userID: ID) throws {
         try ensure(
             .saleIsRunning,
-            .noPendingPurchase,
-            .buyerIsNotOwner(userID)
+            .noPurchaseIsPending,
+            .buyerIsNotSeller(userID)
         )
         
         apply(purchaseRequested(userID: userID))
@@ -41,7 +41,10 @@ extension Domain {
     }
 
     public func completePurchase() throws {
-        try ensure(.purchaseIsPending)
+        try ensure(
+            .purchaseIsPending,
+            .domainIsOwnedByUsOrOurUser
+        )
 
         let userID   = sale.purchase!.userID
         let newOwner = Owner.user(userID: userID)
@@ -54,9 +57,9 @@ extension Domain {
         try ensure(.noBusinessIsActive)
         
         apply(auctionOpened(
-            owner   : owner ?? .us,
-            start   : .now,
-            end     : .now + Default.durationOfAuction
+            seller : owner ?? .us,
+            start  : .now,
+            end    : .now + Default.durationOfAuction
         ))
     }
 
@@ -67,11 +70,13 @@ extension Domain {
     }
 
     public func completeAuction() throws {
-        try ensure(.auctionIsRunning)
+        try ensure(
+            .auctionIsRunning,
+            .domainIsOwnedByUsOrOurUser
+        )
         
         let winningBid = auction.bids.values
-            .filter { !$0.canceled }
-            .max { $0.amount < $1.amount }
+            .reject(\.canceled).max(\.amount)
 
         apply(auctionCompleted())
 
@@ -89,7 +94,7 @@ extension Domain {
     }
 
     public func addBid(bidID: ID, userID: ID, amount: Money) throws {
-        try ensure(.auctionIsRunning, .bidderIsNotOwner(userID))
+        try ensure(.auctionIsRunning, .bidderIsNotSeller(userID))
         
         apply(bidAdded(bidID: bidID, userID: userID, amount: amount))
         

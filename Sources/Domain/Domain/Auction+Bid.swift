@@ -1,12 +1,12 @@
 extension Domain {
     struct Auction: Codable {
-        let owner  : Owner
+        let seller : Owner
         let start  : Date
         var end    : Date
         var bids   : [ID:Bid] = [:]
         
-        init(owner: Domain.Owner, start: Date, end: Date) {
-            self.owner = owner
+        init(seller: Domain.Owner, start: Date, end: Date) {
+            self.seller = seller
             self.start = start
             self.end   = end
         }
