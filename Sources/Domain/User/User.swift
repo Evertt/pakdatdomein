@@ -8,7 +8,7 @@ public final class User: AggregateRoot {
     public var version: Int = 0
     public var uncommittedEvents = [Event]()
 
-    init(id: ID, version: Int, name: Name, email: Email, password: Password) {
+    init(id: ID, version: Int = 1, name: Name, email: Email, password: Password) {
         self.id       = id
         self.version  = version
 

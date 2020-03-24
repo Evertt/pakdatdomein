@@ -57,3 +57,23 @@ extension Optional where Wrapped: _Dictionary {
         }
     }
 }
+
+extension Dictionary where Key == ObjectIdentifier {
+    subscript(key: Any) -> Value? {
+        get {
+            return self[ObjectIdentifier(type(of: key))]
+        }
+        set {
+            self[ObjectIdentifier(type(of: key))] = newValue
+        }
+    }
+    
+    subscript(key: Any.Type) -> Value? {
+        get {
+            return self[ObjectIdentifier(key)]
+        }
+        set {
+            self[ObjectIdentifier(key)] = newValue
+        }
+    }
+}

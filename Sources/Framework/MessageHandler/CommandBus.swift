@@ -1,14 +1,17 @@
 public class CommandBus {
-    let commandHandlers: [String:CommandHandler]
+    let commandHandlers: [ObjectIdentifier:CommandHandler]
     var sagaHandlers: [SagaEventBus] = []
     let repository: Repository
     
     public init(repository: Repository, aggregateRoots: [AggregateRoot.Type]) {
-        var commandHandlers = [String:CommandHandler]()
+        var commandHandlers = [ObjectIdentifier:CommandHandler]()
         var sagaHandlers = [SagaEventBus]()
         
         for entity in aggregateRoots {
-            commandHandlers.merge(entity.handles) { $1 }
+            commandHandlers.merge(entity.handles, uniquingKeysWith: {
+                current, new in
+                return new
+            })
         }
         
         self.repository = repository
@@ -16,8 +19,8 @@ public class CommandBus {
         self.commandHandlers = commandHandlers
         
         for entity in aggregateRoots {
-            sagaHandlers.append(contentsOf: entity.sagas.map {
-                SagaEventBus(commandBus: self, saga: $0)
+            sagaHandlers.append(contentsOf: entity.sagas.map { saga in
+                SagaEventBus(commandBus: self, saga: saga)
             })
         }
         
@@ -25,9 +28,7 @@ public class CommandBus {
     }
     
     public func send(_ command: Command) throws {
-        let commandType = command.type
-        
-        guard let handler = commandHandlers[commandType] else {
+        guard let handler = commandHandlers[command] else {
             throw Error.noCommandHandlerFound(command: type(of: command))
         }
         
@@ -40,7 +41,5 @@ public class CommandBus {
         for sagaHandler in sagaHandlers {
             try sagaHandler.fireEvents(of: aggregateRoot)
         }
-        
-        aggregateRoot.uncommittedEvents = []
     }
 }

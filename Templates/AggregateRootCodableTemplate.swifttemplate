@@ -1,7 +1,0 @@
-<%_ for type in types.implementing["AggregateRoot"] { _%>
-extension <%= type.name %> {
-    enum CodingKeys: String, CodingKey {
-        case <%= type.variables.filter({$0.name != "version" && $0.name != "uncommittedEvents"}).filter({!$0.isStatic && !$0.isComputed}).map({"\($0.name)"}).joined(separator: ", ") %>
-    }
-}
-<%_ } _%>

@@ -11,7 +11,7 @@ extension Sequence {
         return self.filter { $0[keyPath: keyPath] }
     }
     
-    func except(_ keyPath: KeyPath<Element, Bool>) -> [Element] {
+    func exclude(_ keyPath: KeyPath<Element, Bool>) -> [Element] {
         return self.filter { !$0[keyPath: keyPath] }
     }
 }
@@ -29,8 +29,8 @@ extension Dictionary {
         return values.filter(keyPath)
     }
     
-    func except(_ keyPath: KeyPath<Value, Bool>) -> [Value] {
-        return values.except(keyPath)
+    func exclude(_ keyPath: KeyPath<Value, Bool>) -> [Value] {
+        return values.exclude(keyPath)
     }
 }
 

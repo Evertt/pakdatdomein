@@ -76,7 +76,7 @@ extension Domain {
         )
         
         let winningBid = auction.bids
-            .except(\.canceled).max(\.amount)
+            .exclude(\.canceled).max(\.amount)
 
         apply(auctionCompleted())
 

@@ -3,8 +3,6 @@ extension User {
     static func userRegistered(id: ID, name: Name, email: Email, password: Password) -> User {
         return User(
             id       : id,
-            version  : 1,
-
             name     : name,
             email    : email,
             password : password

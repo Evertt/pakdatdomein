@@ -1,5 +1,5 @@
 public protocol EventApplier {
-    var type: Any.Type { get }
+    var eventType: Any.Type { get }
     
     @discardableResult
     func apply<AR: AggregateRoot>(event: Event, on aggregateRoot: AR?) -> AR
@@ -8,11 +8,11 @@ public protocol EventApplier {
 struct TypeEventApplier<AR: AggregateRoot, E: Event>: EventApplier {
     typealias Applier = (E) -> AR
     let applier: Applier
-    let type: Any.Type
+    let eventType: Any.Type
     
     init(applier: @escaping Applier) {
         self.applier = applier
-        self.type = E.self
+        self.eventType = E.self
     }
     
     func apply<T: AggregateRoot>(event: Event, on _: T?) -> T {
@@ -28,11 +28,11 @@ struct TypeEventApplier<AR: AggregateRoot, E: Event>: EventApplier {
 struct InstanceEventApplier<AR: AggregateRoot, E: Event>: EventApplier {
     typealias Applier = (AR) -> (E) -> Void
     let applier: Applier
-    let type: Any.Type
+    let eventType: Any.Type
     
     init(applier: @escaping Applier) {
         self.applier = applier
-        self.type = E.self
+        self.eventType = E.self
     }
     
     func apply<T: AggregateRoot>(event: Event, on aggregateRoot: T?) -> T {

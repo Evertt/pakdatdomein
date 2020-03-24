@@ -8,12 +8,11 @@ public prefix func ~<AR: AggregateRoot, E: Event>(applyMethod: @escaping (AR) ->
     return InstanceEventApplier(applier: applyMethod)
 }
 
-public func __(_ appliers: EventApplier...) -> [String:EventApplier] {
-    var dict = [String:EventApplier]()
+public func __(_ appliers: EventApplier...) -> [ObjectIdentifier:EventApplier] {
+    var dict = [ObjectIdentifier:EventApplier]()
     
     for applier in appliers {
-        let type = "\(applier.type)"
-        dict[type] = applier
+        dict[applier.eventType] = applier
     }
     
     return dict
@@ -27,12 +26,11 @@ public prefix func ~<AR: AggregateRoot, C: Command>(handleMethod: @escaping (AR)
     return InstanceCommandHandler(handler: handleMethod)
 }
 
-public func __(_ handlers: CommandHandler...) -> [String:CommandHandler] {
-    var dict = [String:CommandHandler]()
+public func __(_ handlers: CommandHandler...) -> [ObjectIdentifier:CommandHandler] {
+    var dict = [ObjectIdentifier:CommandHandler]()
     
     for handler in handlers {
-        let type = "\(handler.commandType)"
-        dict[type] = handler
+        dict[handler.commandType] = handler
     }
     
     return dict

@@ -53,6 +53,9 @@ extension SourceryMethod {
 
 for type in types.implementing["AggregateRoot"] { _%>
 extension <%= type.name %> {
+    enum CodingKeys: String, CodingKey {
+        case <%= type.variables.filter({$0.name != "version" && $0.name != "uncommittedEvents"}).filter({!$0.isStatic && !$0.isComputed}).map({"\($0.name)"}).joined(separator: ", ") %>
+    }
     <%_ for method in type.methods where method.isCommand || method.isEvent { _%>
     public struct <%= method.callName.ucFirst %>: <%= method.isCommand ? "Command" : "Event" %> {
         public let id: ID<%= method.isEvent ? "\n        public let version: Int" : "" %>

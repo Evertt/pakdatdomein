@@ -1,11 +1,4 @@
-public protocol SaysType {}
-
-extension SaysType {
-    var type: String { return "\(Self.self)" }
-    static var type: String { return "\(Self.self)" }
-}
-
-public protocol Message: SaysType, Codable {
+public protocol Message: Codable {
     var id: ID { get }
 }
 

@@ -11,7 +11,7 @@ public class ARepository: Repository {
     public typealias Index   = Int
 
     var events  = [Event]()
-    var indices = [ARType:[ID:[Version:Index]]]()
+    var indices = [ObjectIdentifier:[ID:[Version:Index]]]()
     
     public init() {}
 
@@ -20,7 +20,7 @@ public class ARepository: Repository {
     }
     
     public func getEvents(from arType: AggregateRoot.Type, with id: ID) -> [Event] {
-        let indices = self.indices[arType.type][id]?.sorted{ $0.key < $1.key }.map{$1}
+        let indices = self.indices[arType][id]?.sorted{ $0.key < $1.key }.map{$1}
         
         return (indices ?? []).map { events[$0] }
     }
@@ -34,7 +34,7 @@ public class ARepository: Repository {
         let events = aggregateRoot.uncommittedEvents
         
         for event in events {
-            indices[aggregateRoot.type][aggregateRoot.id][event.version] = self.events.count
+            indices[aggregateRoot][aggregateRoot.id][event.version] = self.events.count
             self.events.append(event)
         }
     }

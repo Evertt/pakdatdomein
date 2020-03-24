@@ -1,4 +1,4 @@
-public protocol Entity: class, SaysType, Codable {
+public protocol Entity: class, Codable {
     var id: ID { get }
 }
 
@@ -6,8 +6,8 @@ public protocol AggregateRoot: Entity {
     var version: Int { get set }
     var uncommittedEvents: [Event] { get set }
     
-    static var applies: [String:EventApplier]   { get }
-    static var handles: [String:CommandHandler] { get }
+    static var applies: [ObjectIdentifier:EventApplier]   { get }
+    static var handles: [ObjectIdentifier:CommandHandler] { get }
     
     static var sagas: [Saga.Type] { get }
 }
@@ -19,16 +19,16 @@ extension AggregateRoot {
     
     @discardableResult
     func handle(_ command: Command) throws -> Self {
-        guard let commandHandler = Self.handles[command.type] else {
-            throw Error.noCommandHandlerFound(command: Swift.type(of: command))
+        guard let commandHandler = Self.handles[command] else {
+            throw Error.noCommandHandlerFound(command: type(of: command))
         }
         
         return try commandHandler.handle(command: command, for: self)
     }
     
     static func handle(_ command: Command) throws -> Self {
-        guard let commandHandler = handles[command.type] else {
-            throw Error.noCommandHandlerFound(command: Swift.type(of: command))
+        guard let commandHandler = handles[command] else {
+            throw Error.noCommandHandlerFound(command: type(of: command))
         }
         
         return try commandHandler.handle(command: command, for: nil)
@@ -43,8 +43,8 @@ extension AggregateRoot {
     }
     
     func apply(_ event: Event, isNew: Bool) {
-        guard let eventApplier = Self.applies[event.type] else {
-            fatalError("No event applier found for \(Swift.type(of: event))")
+        guard let eventApplier = Self.applies[event] else {
+            fatalError("No event applier found for \(type(of: event))")
         }
         
         if isNew { uncommittedEvents.append(event) }
@@ -52,8 +52,8 @@ extension AggregateRoot {
     }
     
     static func apply(_ event: Event, isNew: Bool) -> Self {
-        guard let eventApplier = applies[event.type] else {
-            fatalError("No event applier found for \(Swift.type(of: event))")
+        guard let eventApplier = applies[event] else {
+            fatalError("No event applier found for \(type(of: event))")
         }
         
         let entity: Self = eventApplier.apply(event: event, on: nil)

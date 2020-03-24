@@ -3,6 +3,9 @@
 
 
 extension Domain {
+    enum CodingKeys: String, CodingKey {
+        case id, url, owner, business
+    }
 
     public struct CreateFoundDomain: Command {
         public let id: ID
@@ -589,6 +592,9 @@ extension Domain {
 }
 
 extension User {
+    enum CodingKeys: String, CodingKey {
+        case id, name, email, password, active
+    }
 
     public struct Register: Command {
         public let id: ID
@@ -719,3 +725,4 @@ extension User {
     )
 
 }
+

@@ -1,11 +1,19 @@
 // sourcery:begin: events
 extension Domain {
     static func domainFound(id: ID, url: URL) -> Domain {
-        return Domain(id: id, url: url, owner: nil)
+        return Domain(
+            id    : id,
+            url   : url,
+            owner : nil
+        )
     }
 
     static func domainImported(id: ID, url: URL, userID: ID) -> Domain {
-        return Domain(id: id, url: url, owner: .user(userID: userID))
+        return Domain(
+            id    : id,
+            url   : url,
+            owner : .user(userID: userID)
+        )
     }
 
     func domainGrabbed() {
@@ -21,7 +29,11 @@ extension Domain {
     }
 
     func auctionOpened(seller: Owner, start: Date, end: Date) {
-        auction = Auction(seller: seller, start: start, end: end)
+        auction = Auction(
+            seller : seller,
+            start  : start,
+            end    : end
+        )
     }
 
     func auctionCanceled() {
@@ -57,7 +69,10 @@ extension Domain {
     }
     
     func purchaseRequested(userID: ID) {
-        sale.purchase = Sale.Purchase(userID: userID, price: sale.price)
+        sale.purchase = Sale.Purchase(
+            userID : userID,
+            price  : sale.price
+        )
     }
 
     func purchaseCanceled() {
