@@ -33,15 +33,3 @@ extension Dictionary {
         return values.exclude(keyPath)
     }
 }
-
-extension Array: Error where Element: Error {}
-
-extension Result {
-    func getFailure() -> Failure? {
-        if case .failure(let failure) = self {
-            return failure
-        }
-        
-        return nil
-    }
-}

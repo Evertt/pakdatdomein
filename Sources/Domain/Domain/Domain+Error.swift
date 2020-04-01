@@ -1,7 +1,7 @@
-extension Domain {
+extension Domain: AssertionChecker {
     /// These are all the things that can go wrong in this app
     
-    enum Assertion: Equatable, Error {
+    public enum Assertion {
         case saleIsRunning
         case auctionIsRunning
         case noBusinessIsActive
@@ -15,10 +15,8 @@ extension Domain {
         
         case domainIsOwnedByUsOrOurUser
     }
-}
-
-extension Domain {
-    func check(_ assertion: Assertion) -> AssertionResult {
+    
+    public func check(_ assertion: Assertion) -> Bool {
         switch assertion {
 
         case .noBusinessIsActive where business != nil,
@@ -31,54 +29,19 @@ extension Domain {
              
              .domainIsOwnedByUsOrOurUser where owner == nil:
             
-            return assertion.failed
+            return false
                 
         case let .bidIsActive(bidID) where business?.auction?.bids[bidID]?.canceled != false:
-            return assertion.failed
+            return false
             
         case let .bidderIsNotSeller(bidder) where bidder == auction.seller:
-            return assertion.failed
+            return false
             
         case let .buyerIsNotSeller(buyer) where buyer == sale.seller:
-            return assertion.failed
+            return false
             
         default:
-            return assertion.succeeded
-        }
-    }
-    
-    func check(_ assertion: Assertion) -> Bool {
-        if case .success = check(assertion) as AssertionResult {
             return true
-        } else {
-            return false
         }
-    }
-    
-    func ensure(_ assertions: Assertion...) throws {
-        let failedAssertions = assertions
-            .compactMap { assertion in
-                check(assertion).getFailure()
-            }
-        
-        if !failedAssertions.isEmpty {
-            throw failedAssertions
-        }
-    }
-}
-
-extension Domain {
-    typealias FailedAssertion = Domain.Assertion
-    typealias FailedAssertions = [FailedAssertion]
-    typealias AssertionResult = Result<Void, FailedAssertions>
-}
-
-extension Domain.Assertion {
-    fileprivate var failed: Domain.AssertionResult {
-        return .failure([self])
-    }
-    
-    fileprivate var succeeded: Domain.AssertionResult {
-        return .success(())
     }
 }

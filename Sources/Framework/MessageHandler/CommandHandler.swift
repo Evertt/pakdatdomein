@@ -20,11 +20,11 @@ struct TypeCommandHandler<AR: AggregateRoot, C: Command>: CommandHandler {
     
     func handle<T: AggregateRoot>(command: Command, for aggregateRoot: T?) throws -> T {
         guard aggregateRoot is AR? else {
-            throw Error.aggregateRootNotRightType(expected: AR.self, got: T.self)
+            throw AggregateRootError.aggregateRootNotRightType(expected: AR.self, got: T.self)
         }
         
         guard let cCommand = command as? C else {
-            throw Error.commandNotRightType(expected: C.self, got: type(of: command))
+            throw AggregateRootError.commandNotRightType(expected: C.self, got: type(of: command))
         }
         
         return try handler(cCommand) as! T
@@ -45,11 +45,11 @@ struct InstanceCommandHandler<AR: AggregateRoot, C: Command>: CommandHandler {
     
     func handle<T: AggregateRoot>(command: Command, for aggregateRoot: T?) throws -> T {
         guard let ar = aggregateRoot as? AR else {
-            throw Error.aggregateRootNotRightType(expected: AR.self, got: T.self)
+            throw AggregateRootError.aggregateRootNotRightType(expected: AR.self, got: T.self)
         }
         
         guard let cCommand = command as? C else {
-            throw Error.commandNotRightType(expected: C.self, got: type(of: command))
+            throw AggregateRootError.commandNotRightType(expected: C.self, got: type(of: command))
         }
         
         try handler(ar)(cCommand)

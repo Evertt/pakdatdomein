@@ -29,7 +29,7 @@ public class CommandBus {
     
     public func send(_ command: Command) throws {
         guard let handler = commandHandlers[command] else {
-            throw Error.noCommandHandlerFound(command: type(of: command))
+            throw AggregateRootError.noCommandHandlerFound(command: type(of: command))
         }
         
         let aggregateRoot = try repository

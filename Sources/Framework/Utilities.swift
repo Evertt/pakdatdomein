@@ -1,11 +1,11 @@
-protocol _Array: Collection, ExpressibleByArrayLiteral {
+protocol AnyArray: Collection, ExpressibleByArrayLiteral {
     mutating func append(_ newElement: Iterator.Element)
     mutating func append<S : Sequence>(contentsOf newElements: S) where S.Iterator.Element == Element
 }
 
-extension Array: _Array {}
+extension Array: AnyArray {}
 
-extension Optional where Wrapped: _Array {
+extension Optional where Wrapped: AnyArray {
     mutating func append(_ newElement: Wrapped.Iterator.Element) {
         switch self {
         case .none:
@@ -26,15 +26,15 @@ extension Optional where Wrapped: _Array {
     }
 }
 
-protocol _Dictionary: ExpressibleByDictionaryLiteral {
+protocol AnyDictionary: ExpressibleByDictionaryLiteral {
     associatedtype Key
     associatedtype Value
     
     subscript(key: Key) -> Value? { get set }
 }
-extension Dictionary: _Dictionary {}
+extension Dictionary: AnyDictionary {}
 
-extension Optional where Wrapped: _Dictionary {
+extension Optional where Wrapped: AnyDictionary {
     subscript(key: Wrapped.Key) -> Wrapped.Value? {
         get {
             switch self {

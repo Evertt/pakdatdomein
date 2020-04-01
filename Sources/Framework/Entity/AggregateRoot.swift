@@ -20,7 +20,7 @@ extension AggregateRoot {
     @discardableResult
     func handle(_ command: Command) throws -> Self {
         guard let commandHandler = Self.handles[command] else {
-            throw Error.noCommandHandlerFound(command: type(of: command))
+            throw AggregateRootError.noCommandHandlerFound(command: type(of: command))
         }
         
         return try commandHandler.handle(command: command, for: self)
@@ -28,7 +28,7 @@ extension AggregateRoot {
     
     static func handle(_ command: Command) throws -> Self {
         guard let commandHandler = handles[command] else {
-            throw Error.noCommandHandlerFound(command: type(of: command))
+            throw AggregateRootError.noCommandHandlerFound(command: type(of: command))
         }
         
         return try commandHandler.handle(command: command, for: nil)
@@ -62,7 +62,7 @@ extension AggregateRoot {
     }
 }
 
-enum Error: Swift.Error {
+enum AggregateRootError: Error {
     case noCommandHandlerFound(command: Command.Type)
     case commandNotRightType(expected: Command.Type, got: Command.Type)
     case aggregateRootNotRightType(expected: AggregateRoot.Type, got: AggregateRoot.Type)
