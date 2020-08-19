@@ -1,6 +1,6 @@
 // sourcery:begin: events
 extension User {
-    static func userRegistered(id: ID, name: Name, email: Email, password: Password) -> User {
+    static func userRegistered(id: ID, name: String, email: String, password: String) -> User {
         return User(
             id       : id,
             name     : name,
@@ -9,11 +9,11 @@ extension User {
         )
     }
     
-    func userChangedEmail(newEmail: Email) {
+    func userChangedEmail(_ newEmail: String) {
         email = newEmail
     }
 
-    func userChangedPassword(newPassword: Password) {
+    func userChangedPassword(_ newPassword: String) {
         password = newPassword
     }
 }

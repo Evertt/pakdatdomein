@@ -1,4 +1,5 @@
 public protocol Repository {
+    func get(_ arType: AggregateRoot.Type) -> [AggregateRoot]
     func get(_ arType: AggregateRoot.Type, byID id: ID) -> AggregateRoot?
     func getEvents(from arType: AggregateRoot.Type, with id: ID) -> [Event]
     func getEvents(startingAt index: Int, max: Int) -> [Event]
@@ -14,6 +15,16 @@ public class ARepository: Repository {
     var indices = [ObjectIdentifier:[ID:[Version:Index]]]()
     
     public init() {}
+    
+    public func get(_ arType: AggregateRoot.Type) -> [AggregateRoot] {
+        return getEvents(from: arType).compactMap(arType.load)
+    }
+    
+    public func getEvents(from arType: AggregateRoot.Type) -> [[Event]] {
+        let keys = self.indices[arType]?.map { $0.key } ?? []
+        
+        return keys.map { getEvents(from: arType, with: $0) }
+    }
 
     public func get(_ aggregateRoot: AggregateRoot.Type, byID id: ID) -> AggregateRoot? {
         return aggregateRoot.load(from: getEvents(from: aggregateRoot, with: id))

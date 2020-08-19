@@ -648,11 +648,11 @@ extension User {
     public struct UserRegistered: Event {
         public let id: ID
         public let version: Int
-        public let name: Name
-        public let email: Email
-        public let password: Password
+        public let name: String
+        public let email: String
+        public let password: String
 
-        public init(id: ID, version: Int = 1, name: Name, email: Email, password: Password) {
+        public init(id: ID, version: Int = 1, name: String, email: String, password: String) {
             self.id = id
             self.version = version
             self.name = name
@@ -665,7 +665,7 @@ extension User {
         return userRegistered(id: event.id, name: event.name, email: event.email, password: event.password)
     }
     
-    internal static func userRegistered(id: ID, name: Name, email: Email, password: Password)  -> UserRegistered {
+    internal static func userRegistered(id: ID, name: String, email: String, password: String)  -> UserRegistered {
         return UserRegistered(id: id, name: name, email: email, password: password)
     }
     
@@ -673,9 +673,9 @@ extension User {
     public struct UserChangedEmail: Event {
         public let id: ID
         public let version: Int
-        public let newEmail: Email
+        public let newEmail: String
 
-        public init(id: ID, version: Int = 1, newEmail: Email) {
+        public init(id: ID, version: Int = 1, _ newEmail: String) {
             self.id = id
             self.version = version
             self.newEmail = newEmail
@@ -683,20 +683,20 @@ extension User {
     }
 
     internal func userChangedEmail(event: UserChangedEmail) {
-        return userChangedEmail(newEmail: event.newEmail)
+        return userChangedEmail(event.newEmail)
     }
     
-    internal func userChangedEmail(newEmail: Email)  -> UserChangedEmail {
-        return UserChangedEmail(id: id, version: version, newEmail: newEmail)
+    internal func userChangedEmail(_ newEmail: String)  -> UserChangedEmail {
+        return UserChangedEmail(id: id, version: version, newEmail)
     }
     
 
     public struct UserChangedPassword: Event {
         public let id: ID
         public let version: Int
-        public let newPassword: Password
+        public let newPassword: String
 
-        public init(id: ID, version: Int = 1, newPassword: Password) {
+        public init(id: ID, version: Int = 1, _ newPassword: String) {
             self.id = id
             self.version = version
             self.newPassword = newPassword
@@ -704,11 +704,11 @@ extension User {
     }
 
     internal func userChangedPassword(event: UserChangedPassword) {
-        return userChangedPassword(newPassword: event.newPassword)
+        return userChangedPassword(event.newPassword)
     }
     
-    internal func userChangedPassword(newPassword: Password)  -> UserChangedPassword {
-        return UserChangedPassword(id: id, version: version, newPassword: newPassword)
+    internal func userChangedPassword(_ newPassword: String)  -> UserChangedPassword {
+        return UserChangedPassword(id: id, version: version, newPassword)
     }
     
 

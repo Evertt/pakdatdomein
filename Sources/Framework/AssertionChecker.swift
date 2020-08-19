@@ -31,10 +31,45 @@ public protocol AssertionChecker {
     typealias FailedAssertions = Framework.FailedAssertions<Assertion>
     typealias AssertionResult = Result<Void, FailedAssertions>
     
+    static func check(_ assertion: Assertion) -> Bool
     func check(_ assertion: Assertion) -> Bool
 }
 
 public extension AssertionChecker {
+    static func check(_ assertion: Assertion) -> Bool {
+        return false
+    }
+    
+    static func check(_ firstAssertion: Assertion, _ moreAssertions: Assertion...) -> Bool {
+        return check([firstAssertion] + moreAssertions)
+    }
+    
+    static func check(_ assertions: [Assertion]) -> Bool {
+        return !assertions.map(check).contains(false)
+    }
+    
+    static func check(_ assertions: [Assertion]) -> AssertionResult {
+        let failedAssertions = assertions.exclude(check)
+
+        return failedAssertions.isEmpty
+             ? .success(())
+             : .failure(.init(failedAssertions))
+    }
+    
+    static func check(_ assertions: Assertion...) -> AssertionResult {
+        return check(assertions)
+    }
+
+    static func ensure(_ assertions: Assertion...) throws {
+        try check(assertions).get()
+    }
+}
+
+public extension AssertionChecker {
+    func check(_ assertion: Assertion) -> Bool {
+        return Self.check(assertion)
+    }
+    
     func check(_ firstAssertion: Assertion, _ moreAssertions: Assertion...) -> Bool {
         return check([firstAssertion] + moreAssertions)
     }

@@ -34,10 +34,8 @@ extension Domain: AssertionChecker {
         case let .bidIsActive(bidID) where business?.auction?.bids[bidID]?.canceled != false:
             return false
             
-        case let .bidderIsNotSeller(bidder) where bidder == auction.seller:
-            return false
-            
-        case let .buyerIsNotSeller(buyer) where buyer == sale.seller:
+        case let .bidderIsNotSeller(prospect) where prospect == auction.seller,
+             let .buyerIsNotSeller(prospect) where prospect == sale.seller:
             return false
             
         default:
