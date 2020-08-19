@@ -7,7 +7,7 @@ extension User {
 }
 
 extension User: AssertionChecker {
-    /// These are all the things that can go wrong in this app
+    /// These are all the things that can go wrong for the user
     
     public enum Assertion {
         case nameIsValid(_ name: String)
