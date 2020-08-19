@@ -1,4 +1,22 @@
 <%_
+extension MethodParameter {
+    var parLabel: String {
+        if let argumentLabel = argumentLabel {
+            return "\(argumentLabel): "
+        } else {
+            return ""
+        }
+    }
+    
+    var argLabel: String {
+        if let argumentLabel = argumentLabel {
+            return "\(argumentLabel): "
+        } else {
+            return "_ \(name): "
+        }
+    }
+}
+
 func props(_ parameters: [MethodParameter], indent: Int) -> String {
     return parameters
         .filter { $0.name != "id" && $0.name != "version" }
@@ -23,7 +41,7 @@ func inits(_ parameters: [MethodParameter], indent: Int) -> String {
 func eventParams(_ parameters: [MethodParameter], isStatic: Bool) -> String {
     return parameters
         .filter { isStatic || $0.name != "id" && $0.name != "version" }
-        .map { "\($0.name): \($0.typeName)" }
+        .map { "\($0.argLabel)\($0.typeName)" }
         .joined(separator: ", ")
 }
 
@@ -67,8 +85,8 @@ extension <%= type.name %> {
         }
     }
 
-    <%= method.accessLevel %><%= method.isStatic ? " static" : "" %> func <%= method.callName %>(<%= method.isCommand ? "command" : "event" %>: <%= method.callName.ucFirst %>) <%= method.throws ? "throws " : "" %><%= method.returnType != nil ? "-> \(method.returnTypeName) " : "" %>{
-        <%= method.returnType != nil || method.isEvent ? "return " : "" %><%= method.throws ? "try " : "" %><%= method.callName %>(<%= method.parameters.map({"\($0.name): " + (method.isCommand ? "command" : "event") + ".\($0.name)"}).joined(separator: ", ") %>)
+    <%= method.accessLevel.isEmpty ? "" : "\(method.accessLevel) " %><%= method.isStatic ? "static " : "" %>func <%= method.callName %>(<%= method.isCommand ? "command" : "event" %>: <%= method.callName.ucFirst %>) <%= method.throws ? "throws " : "" %><%= method.returnType != nil ? "-> \(method.returnTypeName) " : "" %>{
+        <%= method.returnType != nil || method.isEvent ? "return " : "" %><%= method.throws ? "try " : "" %><%= method.callName %>(<%= method.parameters.map({"\($0.parLabel)" + (method.isCommand ? "command" : "event") + ".\($0.name)"}).joined(separator: ", ") %>)
     }
     <% if method.isEvent { %>
     <%= method.accessLevel %><%= method.isStatic ? " static" : "" %> func <%= method.callName %>(<%= eventParams(method.parameters, isStatic: method.isStatic) %>) <%= method.throws ? "throws " : "" %> -> <%= method.callName.ucFirst %> {

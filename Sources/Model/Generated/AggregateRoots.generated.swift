@@ -1,4 +1,4 @@
-// Generated using Sourcery 0.17.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 1.0.0 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 
@@ -218,11 +218,11 @@ extension Domain {
         }
     }
 
-    internal static func domainFound(event: DomainFound) -> Domain {
+    static func domainFound(event: DomainFound) -> Domain {
         return domainFound(id: event.id, url: event.url)
     }
     
-    internal static func domainFound(id: ID, url: URL)  -> DomainFound {
+     static func domainFound(id: ID, url: URL)  -> DomainFound {
         return DomainFound(id: id, url: url)
     }
     
@@ -241,11 +241,11 @@ extension Domain {
         }
     }
 
-    internal static func domainImported(event: DomainImported) -> Domain {
+    static func domainImported(event: DomainImported) -> Domain {
         return domainImported(id: event.id, url: event.url, userID: event.userID)
     }
     
-    internal static func domainImported(id: ID, url: URL, userID: ID)  -> DomainImported {
+     static func domainImported(id: ID, url: URL, userID: ID)  -> DomainImported {
         return DomainImported(id: id, url: url, userID: userID)
     }
     
@@ -262,11 +262,11 @@ extension Domain {
         }
     }
 
-    internal func domainGrabbed(event: DomainGrabbed) {
+    func domainGrabbed(event: DomainGrabbed) {
         return domainGrabbed()
     }
     
-    internal func domainGrabbed()  -> DomainGrabbed {
+     func domainGrabbed()  -> DomainGrabbed {
         return DomainGrabbed(id: id, version: version)
     }
     
@@ -283,11 +283,11 @@ extension Domain {
         }
     }
 
-    internal func domainLost(event: DomainLost) {
+    func domainLost(event: DomainLost) {
         return domainLost()
     }
     
-    internal func domainLost()  -> DomainLost {
+     func domainLost()  -> DomainLost {
         return DomainLost(id: id, version: version)
     }
     
@@ -304,11 +304,11 @@ extension Domain {
         }
     }
 
-    internal func domainChangedOwner(event: DomainChangedOwner) {
+    func domainChangedOwner(event: DomainChangedOwner) {
         return domainChangedOwner(newOwner: event.newOwner)
     }
     
-    internal func domainChangedOwner(newOwner: Owner?)  -> DomainChangedOwner {
+     func domainChangedOwner(newOwner: Owner?)  -> DomainChangedOwner {
         return DomainChangedOwner(id: id, version: version, newOwner: newOwner)
     }
     
@@ -329,11 +329,11 @@ extension Domain {
         }
     }
 
-    internal func auctionOpened(event: AuctionOpened) {
+    func auctionOpened(event: AuctionOpened) {
         return auctionOpened(seller: event.seller, start: event.start, end: event.end)
     }
     
-    internal func auctionOpened(seller: Owner, start: Date, end: Date)  -> AuctionOpened {
+     func auctionOpened(seller: Owner, start: Date, end: Date)  -> AuctionOpened {
         return AuctionOpened(id: id, version: version, seller: seller, start: start, end: end)
     }
     
@@ -350,11 +350,11 @@ extension Domain {
         }
     }
 
-    internal func auctionCanceled(event: AuctionCanceled) {
+    func auctionCanceled(event: AuctionCanceled) {
         return auctionCanceled()
     }
     
-    internal func auctionCanceled()  -> AuctionCanceled {
+     func auctionCanceled()  -> AuctionCanceled {
         return AuctionCanceled(id: id, version: version)
     }
     
@@ -371,11 +371,11 @@ extension Domain {
         }
     }
 
-    internal func auctionCompleted(event: AuctionCompleted) {
+    func auctionCompleted(event: AuctionCompleted) {
         return auctionCompleted()
     }
     
-    internal func auctionCompleted()  -> AuctionCompleted {
+     func auctionCompleted()  -> AuctionCompleted {
         return AuctionCompleted(id: id, version: version)
     }
     
@@ -392,11 +392,11 @@ extension Domain {
         }
     }
 
-    internal func auctionExtended(event: AuctionExtended) {
+    func auctionExtended(event: AuctionExtended) {
         return auctionExtended(newEndDate: event.newEndDate)
     }
     
-    internal func auctionExtended(newEndDate: Date)  -> AuctionExtended {
+     func auctionExtended(newEndDate: Date)  -> AuctionExtended {
         return AuctionExtended(id: id, version: version, newEndDate: newEndDate)
     }
     
@@ -417,11 +417,11 @@ extension Domain {
         }
     }
 
-    internal func bidAdded(event: BidAdded) {
+    func bidAdded(event: BidAdded) {
         return bidAdded(bidID: event.bidID, userID: event.userID, amount: event.amount)
     }
     
-    internal func bidAdded(bidID: ID, userID: ID, amount: Money)  -> BidAdded {
+     func bidAdded(bidID: ID, userID: ID, amount: Money)  -> BidAdded {
         return BidAdded(id: id, version: version, bidID: bidID, userID: userID, amount: amount)
     }
     
@@ -438,11 +438,11 @@ extension Domain {
         }
     }
 
-    internal func bidCanceled(event: BidCanceled) {
+    func bidCanceled(event: BidCanceled) {
         return bidCanceled(bidID: event.bidID)
     }
     
-    internal func bidCanceled(bidID: ID)  -> BidCanceled {
+     func bidCanceled(bidID: ID)  -> BidCanceled {
         return BidCanceled(id: id, version: version, bidID: bidID)
     }
     
@@ -461,11 +461,11 @@ extension Domain {
         }
     }
 
-    internal func saleOpened(event: SaleOpened) {
+    func saleOpened(event: SaleOpened) {
         return saleOpened(seller: event.seller, price: event.price)
     }
     
-    internal func saleOpened(seller: Owner, price: Money)  -> SaleOpened {
+     func saleOpened(seller: Owner, price: Money)  -> SaleOpened {
         return SaleOpened(id: id, version: version, seller: seller, price: price)
     }
     
@@ -482,11 +482,11 @@ extension Domain {
         }
     }
 
-    internal func saleCanceled(event: SaleCanceled) {
+    func saleCanceled(event: SaleCanceled) {
         return saleCanceled()
     }
     
-    internal func saleCanceled()  -> SaleCanceled {
+     func saleCanceled()  -> SaleCanceled {
         return SaleCanceled(id: id, version: version)
     }
     
@@ -503,11 +503,11 @@ extension Domain {
         }
     }
 
-    internal func purchaseRequested(event: PurchaseRequested) {
+    func purchaseRequested(event: PurchaseRequested) {
         return purchaseRequested(userID: event.userID)
     }
     
-    internal func purchaseRequested(userID: ID)  -> PurchaseRequested {
+     func purchaseRequested(userID: ID)  -> PurchaseRequested {
         return PurchaseRequested(id: id, version: version, userID: userID)
     }
     
@@ -524,11 +524,11 @@ extension Domain {
         }
     }
 
-    internal func purchaseCanceled(event: PurchaseCanceled) {
+    func purchaseCanceled(event: PurchaseCanceled) {
         return purchaseCanceled()
     }
     
-    internal func purchaseCanceled()  -> PurchaseCanceled {
+     func purchaseCanceled()  -> PurchaseCanceled {
         return PurchaseCanceled(id: id, version: version)
     }
     
@@ -545,11 +545,11 @@ extension Domain {
         }
     }
 
-    internal func purchaseCompleted(event: PurchaseCompleted) {
+    func purchaseCompleted(event: PurchaseCompleted) {
         return purchaseCompleted()
     }
     
-    internal func purchaseCompleted()  -> PurchaseCompleted {
+     func purchaseCompleted()  -> PurchaseCompleted {
         return PurchaseCompleted(id: id, version: version)
     }
     
@@ -661,11 +661,11 @@ extension User {
         }
     }
 
-    internal static func userRegistered(event: UserRegistered) -> User {
+    static func userRegistered(event: UserRegistered) -> User {
         return userRegistered(id: event.id, name: event.name, email: event.email, password: event.password)
     }
     
-    internal static func userRegistered(id: ID, name: String, email: String, password: String)  -> UserRegistered {
+     static func userRegistered(id: ID, name: String, email: String, password: String)  -> UserRegistered {
         return UserRegistered(id: id, name: name, email: email, password: password)
     }
     
@@ -675,19 +675,19 @@ extension User {
         public let version: Int
         public let newEmail: String
 
-        public init(id: ID, version: Int = 1, _ newEmail: String) {
+        public init(id: ID, version: Int = 1, newEmail: String) {
             self.id = id
             self.version = version
             self.newEmail = newEmail
         }
     }
 
-    internal func userChangedEmail(event: UserChangedEmail) {
+    func userChangedEmail(event: UserChangedEmail) {
         return userChangedEmail(event.newEmail)
     }
     
-    internal func userChangedEmail(_ newEmail: String)  -> UserChangedEmail {
-        return UserChangedEmail(id: id, version: version, newEmail)
+     func userChangedEmail(_ newEmail: String)  -> UserChangedEmail {
+        return UserChangedEmail(id: id, version: version, newEmail: newEmail)
     }
     
 
@@ -696,19 +696,19 @@ extension User {
         public let version: Int
         public let newPassword: String
 
-        public init(id: ID, version: Int = 1, _ newPassword: String) {
+        public init(id: ID, version: Int = 1, newPassword: String) {
             self.id = id
             self.version = version
             self.newPassword = newPassword
         }
     }
 
-    internal func userChangedPassword(event: UserChangedPassword) {
+    func userChangedPassword(event: UserChangedPassword) {
         return userChangedPassword(event.newPassword)
     }
     
-    internal func userChangedPassword(_ newPassword: String)  -> UserChangedPassword {
-        return UserChangedPassword(id: id, version: version, newPassword)
+     func userChangedPassword(_ newPassword: String)  -> UserChangedPassword {
+        return UserChangedPassword(id: id, version: version, newPassword: newPassword)
     }
     
 
