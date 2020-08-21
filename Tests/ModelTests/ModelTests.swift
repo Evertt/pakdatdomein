@@ -77,7 +77,7 @@ class DomainTests: XCTestCase {
         }
         
         let result = try HelloWorld.perform(
-            request: #"{ domains { id, url } }"#,
+            request: #"{ domains { id, url, owner } }"#,
             viewerContext: commandBus.repository
         ).wait()
         

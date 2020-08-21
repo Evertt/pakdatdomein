@@ -20,27 +20,31 @@ class FoundDomainSaga: Saga {
     func domainFound(event: Domain.DomainFound) throws {
         try bus.send(Domain.PutOnSale(id: event.id, price: 99.euro))
         
+        bus.subscribeOnce(domainLost,        to: event.id)
         bus.subscribeOnce(purchaseRequested, to: event.id)
     }
 
     func purchaseRequested(event: Domain.PurchaseRequested) {
-        bus.subscribeOnce(domainLost,       to: event.id)
         bus.subscribeOnce(domainGrabbed,    to: event.id)
         bus.subscribeOnce(purchaseCanceled, to: event.id)
     }
 
     func purchaseCanceled(event: Domain.PurchaseCanceled) {
-        bus.removeSubscription(domainLost,    from: event.id)
         bus.removeSubscription(domainGrabbed, from: event.id)
         bus.subscribeOnce(purchaseRequested,  to:   event.id)
     }
 
     func domainGrabbed(event: Domain.DomainGrabbed) throws {
+        bus.removeSubscription(domainLost, from: event.id)
+        
         try bus.send(Domain.CompletePurchase(id: event.id))
     }
 
     func domainLost(event: Domain.DomainLost) throws {
-        try bus.send(Domain.CancelPurchase(id: event.id))
+        bus.removeSubscription(purchaseRequested, from: event.id)
+        bus.removeSubscription(domainGrabbed,     from: event.id)
+        
+        try bus.send(Domain.CancelSale(id: event.id))
     }
 }
 

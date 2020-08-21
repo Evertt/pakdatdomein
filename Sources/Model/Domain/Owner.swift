@@ -12,7 +12,7 @@ extension Domain.Owner: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         
-        if container.decodeNil() {
+        if (try? container.decode(String.self)) == "us" {
             self = .us
         } else {
             let userID = try container.decode(Int.self)
@@ -25,9 +25,9 @@ extension Domain.Owner: Codable {
         
         switch self {
         case .us:
-            return try container.encodeNil()
+            return try container.encode("us")
         case let .user(userID):
-            return try container.encode(userID.value)
+            return try container.encode(userID)
         }
     }
 }

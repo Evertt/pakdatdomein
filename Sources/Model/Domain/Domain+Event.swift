@@ -24,7 +24,7 @@ extension Domain {
         // TODO: implement
     }
 
-    func domainChangedOwner(newOwner: Owner?) {
+    func domainChangedOwner(_ newOwner: Owner?) {
         owner = newOwner
     }
 
@@ -56,7 +56,7 @@ extension Domain {
         )
     }
 
-    func bidCanceled(bidID: ID) {
+    func bidCanceled(_ bidID: ID) {
         auction.bids[bidID]!.canceled = true
     }
 

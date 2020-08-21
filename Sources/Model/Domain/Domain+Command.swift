@@ -50,7 +50,7 @@ extension Domain {
         let newOwner = Owner.user(userID: userID)
 
         apply(purchaseCompleted())
-        apply(domainChangedOwner(newOwner: newOwner))
+        apply(domainChangedOwner(newOwner))
     }
 
     public func openAuction() throws {
@@ -83,7 +83,7 @@ extension Domain {
         if let winningBid = winningBid {
             let newOwner = Owner.user(userID: winningBid.userID)
 
-            apply(domainChangedOwner(newOwner: newOwner))
+            apply(domainChangedOwner(newOwner))
         }
     }
 
@@ -106,6 +106,6 @@ extension Domain {
     public func cancelBid(bidID: ID) throws {
         try ensure(.bidIsActive(bidID))
         
-        apply(bidCanceled(bidID: bidID))
+        apply(bidCanceled(bidID))
     }
 }

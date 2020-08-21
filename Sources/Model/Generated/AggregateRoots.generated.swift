@@ -305,10 +305,10 @@ extension Domain {
     }
 
     func domainChangedOwner(event: DomainChangedOwner) {
-        return domainChangedOwner(newOwner: event.newOwner)
+        return domainChangedOwner(event.newOwner)
     }
     
-     func domainChangedOwner(newOwner: Owner?)  -> DomainChangedOwner {
+     func domainChangedOwner(_ newOwner: Owner?)  -> DomainChangedOwner {
         return DomainChangedOwner(id: id, version: version, newOwner: newOwner)
     }
     
@@ -439,10 +439,10 @@ extension Domain {
     }
 
     func bidCanceled(event: BidCanceled) {
-        return bidCanceled(bidID: event.bidID)
+        return bidCanceled(event.bidID)
     }
     
-     func bidCanceled(bidID: ID)  -> BidCanceled {
+     func bidCanceled(_ bidID: ID)  -> BidCanceled {
         return BidCanceled(id: id, version: version, bidID: bidID)
     }
     
