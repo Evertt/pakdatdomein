@@ -33,3 +33,23 @@ extension Money: Comparable {
         return left.amount * left.currency.rate < right.amount * right.currency.rate
     }
 }
+
+public extension Int {
+    var euro: Money {
+        return Money(amount: Decimal(self), currency: .eur)
+    }
+    
+    var dollar: Money {
+        return Money(amount: Decimal(self), currency: .usd)
+    }
+}
+
+public extension Double {
+    var euro: Money {
+        return Money(amount: Decimal(self), currency: .eur)
+    }
+    
+    var dollar: Money {
+        return Money(amount: Decimal(self), currency: .usd)
+    }
+}

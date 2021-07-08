@@ -1,29 +1,6 @@
 import XCTest
 import Model
 @testable import Framework
-import GraphZahl
-
-enum HelloWorld: GraphQLSchema {
-    typealias ViewerContext = Repository
-
-    class Query: QueryType {
-        let repository: Repository
-
-        required init(viewerContext repository: Repository) {
-            self.repository = repository
-        }
-
-        func domain(domainID: Int) -> Domain {
-            return repository.get(Domain.self, byID: ID(domainID)) as! Domain
-        }
-
-        func domains() -> [Domain] {
-            return repository.get(Domain.self) as! [Domain]
-        }
-    }
-
-    typealias Mutation = None
-}
 
 class DomainTests: XCTestCase {
     static let allTests = [
@@ -34,33 +11,40 @@ class DomainTests: XCTestCase {
         let repository = ARepository()
         let commandBus = CommandBus(repository: repository, aggregateRoots: [Domain.self, User.self])
         
-        let user1ID = ID()
-        let user2ID = ID()
-        let user3ID = ID()
+        let johnID = ID()
+        let janeID = ID()
+        let jayID = ID()
 
         let domainID = ID()
 
-        let bid1ID = ID()
-        let bid2ID = ID()
+        let janesBidID = ID()
+        let johnsBidID = ID()
         
         let url = URL(string: "www.example.com")!
         
         let commands: [Command] = [
-            User.Register(id: user1ID, name: "John Doe", email: "john.doe@example.com", password: "secret_password"),
-            User.Register(id: user2ID, name: "Jane Doe", email: "jane.doe@example.com", password: "secret_password"),
-            User.Register(id: user3ID, name: "Mofo Doe", email: "mofo.doe@example.com", password: "secret_password"),
+            // Register some users
+            User.Register(id: johnID, name: "John Doe", email: "john.doe@example.com", password: "secret_password"),
+            User.Register(id: janeID, name: "Jane Doe", email: "jane.doe@example.com", password: "secret_password"),
+            User.Register(id: jayID, name: "Jay Doe", email: "jay.doe@example.com", password: "secret_password"),
             
+            // Say that we a found domain
             Domain.CreateFoundDomain(id: domainID, url: url),
-            Domain.RequestPurchase(id: domainID, userID: user1ID),
+            // A user should be able to request to purchase the found domain,
+            // for if we will be able to grab it
+            Domain.RequestPurchase(id: domainID, userID: johnID),
+            // And then let's say that we were able to grab the domain,
+            // then the FoundDomainSaga should automatically complete the user's purchase
             Domain.GrabDomain(id: domainID),
 
             Domain.OpenAuction(id: domainID),
-            Domain.AddBid(id: domainID, bidID: bid1ID, userID: user2ID, amount: Money(amount: 2, currency: .eur)),
-            Domain.AddBid(id: domainID, bidID: bid2ID, userID: user3ID, amount: Money(amount: 5, currency: .eur)),
-            Domain.CancelBid(id: domainID, bidID: bid2ID),
+            Domain.AddBid(id: domainID, bidID: janesBidID, userID: janeID, amount: 2.euro),
+            Domain.AddBid(id: domainID, bidID: johnsBidID, userID: jayID, amount: 5.euro),
+            Domain.CancelBid(id: domainID, bidID: johnsBidID),
             Domain.CompleteAuction(id: domainID),
+            
             Domain.PutOnSale(id: domainID, price: Money(amount: 150, currency: .eur)),
-            Domain.RequestPurchase(id: domainID, userID: user3ID),
+            Domain.RequestPurchase(id: domainID, userID: jayID),
             Domain.CancelSale(id: domainID),
         ]
         
@@ -72,16 +56,41 @@ class DomainTests: XCTestCase {
             print("\n🔴", error)
         }
         
-        for event in repository.getEvents() {
-            print("\n🟢", event)
+        let expectedEvents: [Event] = [
+            // These events are just expected as a direct result from our commands
+            User.UserRegistered(id: johnID, version: 1, name: "John Doe", email: "john.doe@example.com", password: "secret_password"),
+            User.UserRegistered(id: janeID, version: 1, name: "Jane Doe", email: "jane.doe@example.com", password: "secret_password"),
+            User.UserRegistered(id: jayID, version: 1, name: "Jay Doe", email: "jay.doe@example.com", password: "secret_password"),
+            Domain.DomainFound(id: domainID, version: 1, url: url),
+            
+            // These events prove that the FoundDomainSaga works correctly
+            Domain.SaleOpened(id: domainID, version: 2, seller: .us, price: Default.priceOfDomain),
+            Domain.PurchaseRequested(id: domainID, version: 3, userID: johnID),
+            Domain.DomainGrabbed(id: domainID, version: 4),
+            Domain.PurchaseCompleted(id: domainID, version: 5),
+            Domain.DomainChangedOwner(id: domainID, version: 6, newOwner: .user(userID: johnID)),
+            
+            // Again, these events are just expected as a direct result from our commands
+            Domain.AuctionOpened(id: domainID, version: 7, seller: .user(userID: johnID), start: .now, end: .now + 10.days),
+            Domain.BidAdded(id: domainID, version: 8, bidID: janesBidID, userID: janeID, amount: 2.euro),
+            Domain.BidAdded(id: domainID, version: 9, bidID: johnsBidID, userID: jayID, amount: 5.euro),
+            Domain.BidCanceled(id: domainID, version: 10, bidID: johnsBidID),
+            Domain.AuctionCompleted(id: domainID, version: 11),
+            // Since John canceled his bid, we expect Jane to get the domain, even though the bid lower
+            Domain.DomainChangedOwner(id: domainID, version: 12, newOwner: .user(userID: janeID)),
+            
+            Domain.SaleOpened(id: domainID, version: 13, seller: .user(userID: janeID), price: 150.euro),
+            Domain.PurchaseRequested(id: domainID, version: 14, userID: jayID),
+            // If a sale is canceled, then the purchase should be canceled too
+            Domain.PurchaseCanceled(id: domainID, version: 15),
+            Domain.SaleCanceled(id: domainID, version: 16)
+        ]
+        
+        let actualEvents = repository.getEvents()
+        
+        for (i, event) in expectedEvents.enumerated() {
+            XCTAssert("\(event)" == "\(actualEvents[i])")
         }
-        
-        let result = try HelloWorld.perform(
-            request: #"{ domains { id, url, owner } }"#,
-            viewerContext: commandBus.repository
-        ).wait()
-        
-        print("\n🔴", result, "\n")
     }
 }
 

@@ -27,7 +27,10 @@ func props(_ parameters: [MethodParameter], indent: Int) -> String {
 func nit(_ parameters: [MethodParameter]) -> String {
     return parameters
         .filter { $0.name != "id" && $0.name != "version" }
-        .map { ", \($0.name): \($0.typeName)" }
+        .map {
+            let defaultValue = $0.defaultValue != nil ? " = \($0.defaultValue!)" : ""
+            return ", \($0.name): \($0.typeName)\(defaultValue)"
+        }
         .joined(separator: "")
 }
 
@@ -75,7 +78,7 @@ extension <%= type.name %> {
         case <%= type.variables.filter({$0.name != "version" && $0.name != "uncommittedEvents"}).filter({!$0.isStatic && !$0.isComputed}).map({"\($0.name)"}).joined(separator: ", ") %>
     }
     <%_ for method in type.methods where method.isCommand || method.isEvent { _%>
-    public struct <%= method.callName.ucFirst %>: <%= method.isCommand ? "Command" : "Event" %> {
+    public struct <%= method.callName.ucFirst %>: <%= method.isCommand ? "Command" : "Event" %>, Equatable {
         public let id: ID<%= method.isEvent ? "\n        public let version: Int" : "" %>
         <%= props(method.parameters, indent: 8) %>
 

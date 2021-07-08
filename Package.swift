@@ -8,18 +8,16 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/Evertt/Timepiece", from: "1.3.2"),
-        .package(url: "https://github.com/nerdsupremacist/GraphZahl.git", from: "0.1.0-alpha."),
-        // .package(url: "https://github.com/nerdsupremacist/graphzahl-vapor-support.git", from: "0.1.0-alpha."),
     ],
     targets: [
         .target(name: "Framework"),
         .target(
             name: "Model",
-            dependencies: ["Framework", "Timepiece", "GraphZahl"]
+            dependencies: ["Framework", "Timepiece"]
         ),
         .testTarget(
             name: "ModelTests",
-            dependencies: ["Model", "Framework", "GraphZahl"]
+            dependencies: ["Model", "Framework"]
         ),
     ]
 )

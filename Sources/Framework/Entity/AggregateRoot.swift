@@ -1,4 +1,4 @@
-public protocol Entity: class, Codable {
+public protocol Entity: AnyObject, Codable {
     var id: ID { get }
 }
 

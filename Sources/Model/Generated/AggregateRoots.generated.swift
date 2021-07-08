@@ -1,13 +1,12 @@
-// Generated using Sourcery 1.0.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 1.4.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
-
 
 extension Domain {
     enum CodingKeys: String, CodingKey {
         case id, url, owner, business
     }
 
-    public struct CreateFoundDomain: Command {
+    public struct CreateFoundDomain: Command, Equatable {
         public let id: ID
         public let url: URL
 
@@ -22,7 +21,7 @@ extension Domain {
     }
     
 
-    public struct GrabDomain: Command {
+    public struct GrabDomain: Command, Equatable {
         public let id: ID
         
 
@@ -37,7 +36,7 @@ extension Domain {
     }
     
 
-    public struct PutOnSale: Command {
+    public struct PutOnSale: Command, Equatable {
         public let id: ID
         public let price: Money
 
@@ -52,7 +51,7 @@ extension Domain {
     }
     
 
-    public struct RequestPurchase: Command {
+    public struct RequestPurchase: Command, Equatable {
         public let id: ID
         public let userID: ID
 
@@ -67,7 +66,7 @@ extension Domain {
     }
     
 
-    public struct CancelPurchase: Command {
+    public struct CancelPurchase: Command, Equatable {
         public let id: ID
         
 
@@ -82,7 +81,7 @@ extension Domain {
     }
     
 
-    public struct CancelSale: Command {
+    public struct CancelSale: Command, Equatable {
         public let id: ID
         
 
@@ -97,7 +96,7 @@ extension Domain {
     }
     
 
-    public struct CompletePurchase: Command {
+    public struct CompletePurchase: Command, Equatable {
         public let id: ID
         
 
@@ -112,22 +111,22 @@ extension Domain {
     }
     
 
-    public struct OpenAuction: Command {
+    public struct OpenAuction: Command, Equatable {
         public let id: ID
-        
+        public let duration: TimeInterval
 
-        public init(id: ID) {
+        public init(id: ID, duration: TimeInterval = Default.durationOfAuction) {
             self.id = id
-            
+            self.duration = duration
         }
     }
 
     public func openAuction(command: OpenAuction) throws {
-        try openAuction()
+        try openAuction(duration: command.duration)
     }
     
 
-    public struct CancelAuction: Command {
+    public struct CancelAuction: Command, Equatable {
         public let id: ID
         
 
@@ -142,7 +141,7 @@ extension Domain {
     }
     
 
-    public struct CompleteAuction: Command {
+    public struct CompleteAuction: Command, Equatable {
         public let id: ID
         
 
@@ -157,7 +156,7 @@ extension Domain {
     }
     
 
-    public struct ExtendAuction: Command {
+    public struct ExtendAuction: Command, Equatable {
         public let id: ID
         public let newEndDate: Date
 
@@ -172,7 +171,7 @@ extension Domain {
     }
     
 
-    public struct AddBid: Command {
+    public struct AddBid: Command, Equatable {
         public let id: ID
         public let bidID: ID
         public let userID: ID
@@ -191,7 +190,7 @@ extension Domain {
     }
     
 
-    public struct CancelBid: Command {
+    public struct CancelBid: Command, Equatable {
         public let id: ID
         public let bidID: ID
 
@@ -206,7 +205,7 @@ extension Domain {
     }
     
 
-    public struct DomainFound: Event {
+    public struct DomainFound: Event, Equatable {
         public let id: ID
         public let version: Int
         public let url: URL
@@ -218,16 +217,16 @@ extension Domain {
         }
     }
 
-    static func domainFound(event: DomainFound) -> Domain {
+    internal static func domainFound(event: DomainFound) -> Domain {
         return domainFound(id: event.id, url: event.url)
     }
     
-     static func domainFound(id: ID, url: URL)  -> DomainFound {
+    internal static func domainFound(id: ID, url: URL)  -> DomainFound {
         return DomainFound(id: id, url: url)
     }
     
 
-    public struct DomainImported: Event {
+    public struct DomainImported: Event, Equatable {
         public let id: ID
         public let version: Int
         public let url: URL
@@ -241,16 +240,16 @@ extension Domain {
         }
     }
 
-    static func domainImported(event: DomainImported) -> Domain {
+    internal static func domainImported(event: DomainImported) -> Domain {
         return domainImported(id: event.id, url: event.url, userID: event.userID)
     }
     
-     static func domainImported(id: ID, url: URL, userID: ID)  -> DomainImported {
+    internal static func domainImported(id: ID, url: URL, userID: ID)  -> DomainImported {
         return DomainImported(id: id, url: url, userID: userID)
     }
     
 
-    public struct DomainGrabbed: Event {
+    public struct DomainGrabbed: Event, Equatable {
         public let id: ID
         public let version: Int
         
@@ -262,16 +261,16 @@ extension Domain {
         }
     }
 
-    func domainGrabbed(event: DomainGrabbed) {
+    internal func domainGrabbed(event: DomainGrabbed) {
         return domainGrabbed()
     }
     
-     func domainGrabbed()  -> DomainGrabbed {
+    internal func domainGrabbed()  -> DomainGrabbed {
         return DomainGrabbed(id: id, version: version)
     }
     
 
-    public struct DomainLost: Event {
+    public struct DomainLost: Event, Equatable {
         public let id: ID
         public let version: Int
         
@@ -283,16 +282,16 @@ extension Domain {
         }
     }
 
-    func domainLost(event: DomainLost) {
+    internal func domainLost(event: DomainLost) {
         return domainLost()
     }
     
-     func domainLost()  -> DomainLost {
+    internal func domainLost()  -> DomainLost {
         return DomainLost(id: id, version: version)
     }
     
 
-    public struct DomainChangedOwner: Event {
+    public struct DomainChangedOwner: Event, Equatable {
         public let id: ID
         public let version: Int
         public let newOwner: Owner?
@@ -304,16 +303,16 @@ extension Domain {
         }
     }
 
-    func domainChangedOwner(event: DomainChangedOwner) {
+    internal func domainChangedOwner(event: DomainChangedOwner) {
         return domainChangedOwner(event.newOwner)
     }
     
-     func domainChangedOwner(_ newOwner: Owner?)  -> DomainChangedOwner {
+    internal func domainChangedOwner(_ newOwner: Owner?)  -> DomainChangedOwner {
         return DomainChangedOwner(id: id, version: version, newOwner: newOwner)
     }
     
 
-    public struct AuctionOpened: Event {
+    public struct AuctionOpened: Event, Equatable {
         public let id: ID
         public let version: Int
         public let seller: Owner
@@ -329,16 +328,16 @@ extension Domain {
         }
     }
 
-    func auctionOpened(event: AuctionOpened) {
+    internal func auctionOpened(event: AuctionOpened) {
         return auctionOpened(seller: event.seller, start: event.start, end: event.end)
     }
     
-     func auctionOpened(seller: Owner, start: Date, end: Date)  -> AuctionOpened {
+    internal func auctionOpened(seller: Owner, start: Date, end: Date)  -> AuctionOpened {
         return AuctionOpened(id: id, version: version, seller: seller, start: start, end: end)
     }
     
 
-    public struct AuctionCanceled: Event {
+    public struct AuctionCanceled: Event, Equatable {
         public let id: ID
         public let version: Int
         
@@ -350,16 +349,16 @@ extension Domain {
         }
     }
 
-    func auctionCanceled(event: AuctionCanceled) {
+    internal func auctionCanceled(event: AuctionCanceled) {
         return auctionCanceled()
     }
     
-     func auctionCanceled()  -> AuctionCanceled {
+    internal func auctionCanceled()  -> AuctionCanceled {
         return AuctionCanceled(id: id, version: version)
     }
     
 
-    public struct AuctionCompleted: Event {
+    public struct AuctionCompleted: Event, Equatable {
         public let id: ID
         public let version: Int
         
@@ -371,16 +370,16 @@ extension Domain {
         }
     }
 
-    func auctionCompleted(event: AuctionCompleted) {
+    internal func auctionCompleted(event: AuctionCompleted) {
         return auctionCompleted()
     }
     
-     func auctionCompleted()  -> AuctionCompleted {
+    internal func auctionCompleted()  -> AuctionCompleted {
         return AuctionCompleted(id: id, version: version)
     }
     
 
-    public struct AuctionExtended: Event {
+    public struct AuctionExtended: Event, Equatable {
         public let id: ID
         public let version: Int
         public let newEndDate: Date
@@ -392,16 +391,16 @@ extension Domain {
         }
     }
 
-    func auctionExtended(event: AuctionExtended) {
+    internal func auctionExtended(event: AuctionExtended) {
         return auctionExtended(newEndDate: event.newEndDate)
     }
     
-     func auctionExtended(newEndDate: Date)  -> AuctionExtended {
+    internal func auctionExtended(newEndDate: Date)  -> AuctionExtended {
         return AuctionExtended(id: id, version: version, newEndDate: newEndDate)
     }
     
 
-    public struct BidAdded: Event {
+    public struct BidAdded: Event, Equatable {
         public let id: ID
         public let version: Int
         public let bidID: ID
@@ -417,16 +416,16 @@ extension Domain {
         }
     }
 
-    func bidAdded(event: BidAdded) {
+    internal func bidAdded(event: BidAdded) {
         return bidAdded(bidID: event.bidID, userID: event.userID, amount: event.amount)
     }
     
-     func bidAdded(bidID: ID, userID: ID, amount: Money)  -> BidAdded {
+    internal func bidAdded(bidID: ID, userID: ID, amount: Money)  -> BidAdded {
         return BidAdded(id: id, version: version, bidID: bidID, userID: userID, amount: amount)
     }
     
 
-    public struct BidCanceled: Event {
+    public struct BidCanceled: Event, Equatable {
         public let id: ID
         public let version: Int
         public let bidID: ID
@@ -438,16 +437,16 @@ extension Domain {
         }
     }
 
-    func bidCanceled(event: BidCanceled) {
+    internal func bidCanceled(event: BidCanceled) {
         return bidCanceled(event.bidID)
     }
     
-     func bidCanceled(_ bidID: ID)  -> BidCanceled {
+    internal func bidCanceled(_ bidID: ID)  -> BidCanceled {
         return BidCanceled(id: id, version: version, bidID: bidID)
     }
     
 
-    public struct SaleOpened: Event {
+    public struct SaleOpened: Event, Equatable {
         public let id: ID
         public let version: Int
         public let seller: Owner
@@ -461,16 +460,16 @@ extension Domain {
         }
     }
 
-    func saleOpened(event: SaleOpened) {
+    internal func saleOpened(event: SaleOpened) {
         return saleOpened(seller: event.seller, price: event.price)
     }
     
-     func saleOpened(seller: Owner, price: Money)  -> SaleOpened {
+    internal func saleOpened(seller: Owner, price: Money)  -> SaleOpened {
         return SaleOpened(id: id, version: version, seller: seller, price: price)
     }
     
 
-    public struct SaleCanceled: Event {
+    public struct SaleCanceled: Event, Equatable {
         public let id: ID
         public let version: Int
         
@@ -482,16 +481,16 @@ extension Domain {
         }
     }
 
-    func saleCanceled(event: SaleCanceled) {
+    internal func saleCanceled(event: SaleCanceled) {
         return saleCanceled()
     }
     
-     func saleCanceled()  -> SaleCanceled {
+    internal func saleCanceled()  -> SaleCanceled {
         return SaleCanceled(id: id, version: version)
     }
     
 
-    public struct PurchaseRequested: Event {
+    public struct PurchaseRequested: Event, Equatable {
         public let id: ID
         public let version: Int
         public let userID: ID
@@ -503,16 +502,16 @@ extension Domain {
         }
     }
 
-    func purchaseRequested(event: PurchaseRequested) {
+    internal func purchaseRequested(event: PurchaseRequested) {
         return purchaseRequested(userID: event.userID)
     }
     
-     func purchaseRequested(userID: ID)  -> PurchaseRequested {
+    internal func purchaseRequested(userID: ID)  -> PurchaseRequested {
         return PurchaseRequested(id: id, version: version, userID: userID)
     }
     
 
-    public struct PurchaseCanceled: Event {
+    public struct PurchaseCanceled: Event, Equatable {
         public let id: ID
         public let version: Int
         
@@ -524,16 +523,16 @@ extension Domain {
         }
     }
 
-    func purchaseCanceled(event: PurchaseCanceled) {
+    internal func purchaseCanceled(event: PurchaseCanceled) {
         return purchaseCanceled()
     }
     
-     func purchaseCanceled()  -> PurchaseCanceled {
+    internal func purchaseCanceled()  -> PurchaseCanceled {
         return PurchaseCanceled(id: id, version: version)
     }
     
 
-    public struct PurchaseCompleted: Event {
+    public struct PurchaseCompleted: Event, Equatable {
         public let id: ID
         public let version: Int
         
@@ -545,11 +544,11 @@ extension Domain {
         }
     }
 
-    func purchaseCompleted(event: PurchaseCompleted) {
+    internal func purchaseCompleted(event: PurchaseCompleted) {
         return purchaseCompleted()
     }
     
-     func purchaseCompleted()  -> PurchaseCompleted {
+    internal func purchaseCompleted()  -> PurchaseCompleted {
         return PurchaseCompleted(id: id, version: version)
     }
     
@@ -596,7 +595,7 @@ extension User {
         case id, name, email, password, active
     }
 
-    public struct Register: Command {
+    public struct Register: Command, Equatable {
         public let id: ID
         public let name: String
         public let email: String
@@ -615,7 +614,7 @@ extension User {
     }
     
 
-    public struct ChangeEmail: Command {
+    public struct ChangeEmail: Command, Equatable {
         public let id: ID
         public let newEmail: String
 
@@ -630,7 +629,7 @@ extension User {
     }
     
 
-    public struct ChangePassword: Command {
+    public struct ChangePassword: Command, Equatable {
         public let id: ID
         public let newPassword: String
 
@@ -645,7 +644,7 @@ extension User {
     }
     
 
-    public struct UserRegistered: Event {
+    public struct UserRegistered: Event, Equatable {
         public let id: ID
         public let version: Int
         public let name: String
@@ -661,16 +660,16 @@ extension User {
         }
     }
 
-    static func userRegistered(event: UserRegistered) -> User {
+    internal static func userRegistered(event: UserRegistered) -> User {
         return userRegistered(id: event.id, name: event.name, email: event.email, password: event.password)
     }
     
-     static func userRegistered(id: ID, name: String, email: String, password: String)  -> UserRegistered {
+    internal static func userRegistered(id: ID, name: String, email: String, password: String)  -> UserRegistered {
         return UserRegistered(id: id, name: name, email: email, password: password)
     }
     
 
-    public struct UserChangedEmail: Event {
+    public struct UserChangedEmail: Event, Equatable {
         public let id: ID
         public let version: Int
         public let newEmail: String
@@ -682,16 +681,16 @@ extension User {
         }
     }
 
-    func userChangedEmail(event: UserChangedEmail) {
+    internal func userChangedEmail(event: UserChangedEmail) {
         return userChangedEmail(event.newEmail)
     }
     
-     func userChangedEmail(_ newEmail: String)  -> UserChangedEmail {
+    internal func userChangedEmail(_ newEmail: String)  -> UserChangedEmail {
         return UserChangedEmail(id: id, version: version, newEmail: newEmail)
     }
     
 
-    public struct UserChangedPassword: Event {
+    public struct UserChangedPassword: Event, Equatable {
         public let id: ID
         public let version: Int
         public let newPassword: String
@@ -703,11 +702,11 @@ extension User {
         }
     }
 
-    func userChangedPassword(event: UserChangedPassword) {
+    internal func userChangedPassword(event: UserChangedPassword) {
         return userChangedPassword(event.newPassword)
     }
     
-     func userChangedPassword(_ newPassword: String)  -> UserChangedPassword {
+    internal func userChangedPassword(_ newPassword: String)  -> UserChangedPassword {
         return UserChangedPassword(id: id, version: version, newPassword: newPassword)
     }
     

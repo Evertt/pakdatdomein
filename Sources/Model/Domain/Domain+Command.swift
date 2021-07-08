@@ -9,7 +9,7 @@ extension Domain {
     }
 
     public func putOnSale(price: Money) throws {
-        try ensure(.noBusinessIsActive)
+        try ensure(.no(.businessIsActive))
         
         apply(saleOpened(seller: owner ?? .us, price: price))
     }
@@ -17,7 +17,7 @@ extension Domain {
     public func requestPurchase(userID: ID) throws {
         try ensure(
             .saleIsRunning,
-            .noPurchaseIsPending,
+            .no(.purchaseIsPending),
             .buyerIsNotSeller(userID)
         )
         
@@ -53,13 +53,13 @@ extension Domain {
         apply(domainChangedOwner(newOwner))
     }
 
-    public func openAuction() throws {
-        try ensure(.noBusinessIsActive)
+    public func openAuction(duration: TimeInterval = Default.durationOfAuction) throws {
+        try ensure(.no(.businessIsActive))
         
         apply(auctionOpened(
             seller : owner ?? .us,
             start  : .now,
-            end    : .now + Default.durationOfAuction
+            end    : .now + duration
         ))
     }
 

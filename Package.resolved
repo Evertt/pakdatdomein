@@ -2,69 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "ContextKit",
-        "repositoryURL": "https://github.com/nerdsupremacist/ContextKit.git",
-        "state": {
-          "branch": null,
-          "revision": "d68c64dd4ed4c616bb5fd58f9d19d939a1735f20",
-          "version": "0.2.1"
-        }
-      },
-      {
-        "package": "CRuntime",
-        "repositoryURL": "https://github.com/nerdsupremacist/CRuntime.git",
-        "state": {
-          "branch": null,
-          "revision": "95f911318d8c885f6fc05e971471f94adfd39405",
-          "version": "2.1.2"
-        }
-      },
-      {
-        "package": "CwlDemangle",
-        "repositoryURL": "https://github.com/mattgallagher/CwlDemangle.git",
-        "state": {
-          "branch": null,
-          "revision": "b268c08207d2990664605c49b2c71cbd0df3445b",
-          "version": "0.1.0"
-        }
-      },
-      {
-        "package": "GraphQL",
-        "repositoryURL": "https://github.com/nerdsupremacist/GraphQL.git",
-        "state": {
-          "branch": null,
-          "revision": "2bb4e710f0de96a515f10812780b790c531ec6e5",
-          "version": "0.12.1-beta.3"
-        }
-      },
-      {
-        "package": "GraphZahl",
-        "repositoryURL": "https://github.com/nerdsupremacist/GraphZahl.git",
-        "state": {
-          "branch": null,
-          "revision": "a414d3d55b54f50017d58294347928d14c888277",
-          "version": "0.1.0-alpha.11"
-        }
-      },
-      {
-        "package": "Runtime",
-        "repositoryURL": "https://github.com/nerdsupremacist/Runtime.git",
-        "state": {
-          "branch": null,
-          "revision": "7b54e1491840cd248db09a4acd59f83c5238a9c2",
-          "version": "2.1.2-beta.5"
-        }
-      },
-      {
-        "package": "swift-nio",
-        "repositoryURL": "https://github.com/apple/swift-nio.git",
-        "state": {
-          "branch": null,
-          "revision": "a27a07719ca785bcaca019a5b9fe1814b981b4a2",
-          "version": "2.15.0"
-        }
-      },
-      {
         "package": "Timepiece",
         "repositoryURL": "https://github.com/Evertt/Timepiece",
         "state": {
